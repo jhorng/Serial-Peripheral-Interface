@@ -1,12 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g2 -Map=Test.map -O0 --gc-sections -LC:/Users/D203C-01/CoIDE/workspace/Serial Peripheral Interface -TC:/Users/D203C-01/CoIDE/workspace/Serial Peripheral Interface/stm32f429zi_flash.ld -g">
-      <target file="Test.elf" lastModified="15119894aba">
-         <source file="..\obj\main.o" lastModified="151197f86af"/>
-         <source file="..\obj\system_stm32f4xx.o" lastModified="151197f8803"/>
-         <source file="..\obj\SPI.o" lastModified="151197f887b"/>
-         <source file="..\obj\startup_stm32f429xx.o" lastModified="151197f876d"/>
-         <source file="..\obj\RCC.o" lastModified="15119894844"/>
+   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g2 -Map=Test.map -O0 --gc-sections -LC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface -TC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface/stm32f429zi_flash.ld -g">
+      <target file="Test.elf" lastModified="1513d92a177">
+         <source file="..\obj\main.o" lastModified="1513d9260b5"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="1513d2967cc"/>
+         <source file="..\obj\SPI.o" lastModified="1513d929f2c"/>
+         <source file="..\obj\startup_stm32f429xx.o" lastModified="1513d296646"/>
+         <source file="..\obj\stm32f4xx_hal_cortex.o" lastModified="1513d29674f"/>
+         <source file="..\obj\RCC.o" lastModified="1513d296636"/>
+         <source file="..\obj\stm32f4xx_hal_spi.o" lastModified="1513d29653d"/>
       </target>
    </processor>
 </history>
