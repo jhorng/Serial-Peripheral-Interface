@@ -45,8 +45,11 @@ struct SPI_t{
 #define Clock3				3
 #define Clock4				4
 
-#define CRCenable			0
-#define CRCdisable			1
+#define CRCdisable			0
+#define CRCenable			1
+
+#define No_Phase			0
+#define Next_Transfer		1
 
 #define SSMdisable			0
 #define SSMenable			1
@@ -63,9 +66,17 @@ struct SPI_t{
 #define BR6           		110		// Fpclk/128
 #define BR7          	 	111		// Fpclk/256
 
-#define FLAG_TXE  1
+#define FLAG_FRE			8
+#define FLAG_BSY			7
+#define FLAG_OVR			6
+#define FLAG_MODF			5
+#define FLAG_CRCERR			4
+#define FLAG_UDR			3
+#define FLAG_CHSIDE			2
+#define FLAG_TXE			1
+#define FLAG_RXNE			0
 
-#define readyTransmit    getSPI4Status(FLAG_TXE)
+#define readyTransmit    	getSPI4Status(FLAG_TXE)
 
 #define SPI_reg	((SPI*)0x40013400)
 
@@ -82,8 +93,10 @@ void configureFrameFormat(int FF);
 void configureLSBFIRST(int MSB_LSB);
 void configureClock(int clkSelect);
 void enableCRC(int en_CRC);
+void configureCRCNext(int phase);
 void enableSSM(int en_SSM);
 void configureBR(int baudRate);
 void configureSS(int SS);
+void CRCpolynomial(int polynomial);
 
 #endif // __SPI_H__

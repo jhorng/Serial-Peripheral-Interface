@@ -12,12 +12,13 @@ int getSPI4Status( int posBit ){
 }
 
 void enableSPI(int SPE){
-	uint32_t a;
+	uint32_t returnSPI;
 	SPI_reg->SPI_CR1 &= ~(1 << 6);
 	SPI_reg->SPI_CR1 |= SPE << 6;
-	a = SPI_reg->SPI_CR1;
-}
 
+	returnSPI = SPI_reg->SPI_CR1;
+}
+/*
 //void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS){
 void configureSPI(int direction1, int TX_RX1, int RX_ONLY1, int FF1, int DFF1, int MSB_LSB1, int clkSelect1, int en_CRC1, int en_SSM1, int baudRate1, int SS1){
 
@@ -38,7 +39,7 @@ void configureSPI(int direction1, int TX_RX1, int RX_ONLY1, int FF1, int DFF1, i
 		configureSS(SS1);
 	}
 }
-
+*/
 void configureDirection(int direction){
 	uint32_t returnDirection;
 	SPI_reg->SPI_CR1 &= ~(1 << 15);
@@ -130,6 +131,14 @@ void enableCRC(int en_CRC){
 	returnCRC = SPI_reg->SPI_CR1;
 }
 
+void configureCRCNext(int phase){
+	uint32_t returnPhase;
+	SPI_reg->SPI_CR1 &= ~(1 << 12);
+	SPI_reg->SPI_CR1 |= (phase << 12);
+
+	returnPhase = SPI_reg->SPI_CR1;
+}
+
 void enableSSM(int en_SSM){
 	uint32_t returnSSM;
 	SPI_reg->SPI_CR1 &= ~(1 << 9);
@@ -152,4 +161,11 @@ void configureSS(int SS){
 	SPI_reg->SPI_CR2 |= (SS << 2);
 
 	returnSS = SPI_reg->SPI_CR2;
+}
+
+void CRCpolynomial(int polynomial){
+	uint32_t returnPolynomial;
+	SPI_reg->SPI_CRCPR = polynomial;
+
+	returnPolynomial = SPI_reg->SPI_CRCPR;
 }

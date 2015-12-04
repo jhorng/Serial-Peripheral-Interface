@@ -55,9 +55,11 @@ int main(){
 	//configureOutput(Receive);
 	//configureReceive(Receive_Only_Disable);
 	//configureReceive(Receive_Only_Enable);
-	//configureDataFrame(Bit8);
-	//enableCRC(CRCdisable);
-	configureBR(BR1);
+	configureDataFrame(Bit16);
+	enableCRC(CRCenable);
+	CRCpolynomial(0x28);
+	//configureCRCNext(Next_Transfer);
+	configureBR(BR4);
 	//enableSSM(SSMdisable);
 	//configureLSBFIRST(MSB);
 	//configureClock(Clock1);
@@ -78,7 +80,9 @@ int main(){
 		//writeZero(PIN_4, PORTE);
 		//delay(10);
 		//delay(1000);
-		sendData(0x6D);
+		configureCRCNext(Next_Transfer);
+		sendData(0x69); // 8'b01101001
+		// ---- read SR (BSY, CRC error, TXE)
 		//readData = SPI_reg->SPI_DR;
 		//delay(1000);
 		//status = SPI_reg->SPI_SR;
