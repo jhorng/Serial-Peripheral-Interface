@@ -52,22 +52,25 @@ struct GPIO_t{
 #define GPIO_PULL_DOWN				2
 #define GPIO_RESERVED				3
 
-#define AF0				0000
-#define AF1				0001
-#define AF2				0010
-#define AF3				0011
-#define AF4				0100
-#define AF5				0101
-#define AF6				0110
-#define AF7				0111
-#define AF8				1000
-#define AF9				1001
-#define AF10			1010
-#define AF11			1011
-#define AF12			1100
-#define AF13			1101
-#define AF14			1110
-#define AF15			1111
+#define GPIO_PUSH_PULL		0
+#define GPIO_OPEN_DRAIN		1
+
+#define AF0				0
+#define AF1				1
+#define AF2				2
+#define AF3				3
+#define AF4				4
+#define AF5				5
+#define AF6				6
+#define AF7				7
+#define AF8				8
+#define AF9				9
+#define AF10			10
+#define AF11			11
+#define AF12			12
+#define AF13			13
+#define AF14			14
+#define AF15			15
 
 #define GPIOA_BASE_ADDRESS	0x40020000
 #define GPIOB_BASE_ADDRESS	0x40020400
@@ -90,5 +93,6 @@ void pullUpDown(int pinNum, GPIO *port, int pull);
 void writeOne(uint16_t pinNum, GPIO *port);
 void writeZero(uint16_t pinNum, GPIO *port);
 void altFunction(int pinNum, GPIO *port, int AF);
+void outputType(int pinNum, GPIO *port, int type);
 
 #endif // __GPIO_H__

@@ -63,10 +63,11 @@ struct SPI_t{
 #define BR6           		110
 #define BR7          	 	111
 
-#define SPI_reg	((SPI*)0x40013000)
+#define SPI_reg	((SPI*)0x40013400)
 
 void enableSPI(int SPE);
-void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS);
+//void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS);
+void configureSPI(int direction1, int TX_RX1, int RX_ONLY1, int FF1, int DFF1, int MSB_LSB1, int clkSelect1, int en_CRC1, int en_SSM1, int baudRate1, int SS1);
 void configureDirection(int direction);
 void configureOutput(int TX_RX);
 void configureMode(int mode);

@@ -7,7 +7,7 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\SPI.c" lastModified="151624c0d2a">
+      <source file="..\..\..\app\SPI.c" lastModified="15176aed06c">
          <include file="..\..\..\app\SPI.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -23,7 +23,7 @@
       </source>
       <source file="..\..\..\app\Config\system_stm32f4xx.h" lastModified="1514728f96d">
       </source>
-      <source file="..\..\..\app\RCC.c" lastModified="1516233a8b7">
+      <source file="..\..\..\app\RCC.c" lastModified="15176759ae0">
          <include file="..\..\..\app\GPIO.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -209,12 +209,12 @@
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_hash_ex.h"/>
       </source>
-      <source file="..\..\..\app\GPIO.h" lastModified="151620c9d86">
+      <source file="..\..\..\app\GPIO.h" lastModified="1517662e950">
       </source>
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\GPIO.c" lastModified="151620ca82d">
+      <source file="..\..\..\app\GPIO.c" lastModified="1517661007f">
          <include file="..\..\..\app\GPIO.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -296,7 +296,7 @@
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h"/>
       </source>
-      <source file="..\..\..\app\SPI.h" lastModified="151624c2a70">
+      <source file="..\..\..\app\SPI.h" lastModified="15176ae8f1e">
       </source>
    </includePath>
 </dependencies>
