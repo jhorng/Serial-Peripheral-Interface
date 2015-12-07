@@ -1,9 +1,22 @@
 #include "SPI.h"
 #include "RCC.h"
 
+void sendData(uint8_t Data){
+	if(readyTransmit == 1){
+		SPI_reg->SPI_DR = Data;
+	}
+}
+
+int getSPI4Status( int posBit ){
+  uint32_t checkSR = SPI_reg->SPI_SR;
+  return (( SPI_reg->SPI_SR  >> posBit) & 1 );
+}
+
 void enableSPI(int SPE){
+	uint32_t a;
 	SPI_reg->SPI_CR1 &= ~(1 << 6);
 	SPI_reg->SPI_CR1 |= SPE << 6;
+	a = SPI_reg->SPI_CR1;
 }
 
 //void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS){
@@ -94,8 +107,6 @@ void enableCRC(int en_CRC){
 void enableSSM(int en_SSM){
 	SPI_reg->SPI_CR1 &= ~(1 << 9);
 	SPI_reg->SPI_CR1 |= (en_SSM << 9);
-	SPI_reg->SPI_CR1 &= ~(1 << 8);
-	SPI_reg->SPI_CR1 |= (en_SSM << 8);
 }
 
 void configureBR(int baudRate){

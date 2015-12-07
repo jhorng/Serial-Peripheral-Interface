@@ -8,6 +8,17 @@ void gpioUnresetEnableClock(GPIO* port){
 }
 
 void spiUnresetEnableClock(){
+	uint32_t a, b;
+	a = spiUnresetClock();
+	b = spiEnableClock();
+}
+
+uint32_t spiUnresetClock(){
 	Rcc_reg->RCC_APB2RSTR &= ~(1 << 13);
+	return Rcc_reg->RCC_APB2RSTR;
+}
+
+uint32_t spiEnableClock(){
 	Rcc_reg->RCC_APB2ENR |= (1 << 13);
+	return Rcc_reg->RCC_APB2ENR;
 }
