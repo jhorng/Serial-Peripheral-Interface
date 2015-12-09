@@ -19,14 +19,14 @@
       <target file="stm32f4xx_hal_cortex.o" lastModified="1518556530c">
          <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c" lastModified="14c0ebff760"/>
       </target>
-      <target file="main.o" lastModified="151857cd9d3">
-         <source file="..\..\..\app\main.c" lastModified="151857c7ed9"/>
+      <target file="main.o" lastModified="15185c0d364">
+         <source file="..\..\..\app\main.c" lastModified="15185c0c023"/>
       </target>
       <target file="stm32f4xx_hal_gpio.o" lastModified="15185565482">
          <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c" lastModified="14c0ebff760"/>
       </target>
-      <target file="SPI.o" lastModified="15185733320">
-         <source file="..\..\..\app\SPI.c" lastModified="1518562c8cf"/>
+      <target file="SPI.o" lastModified="15185c0d41f">
+         <source file="..\..\..\app\SPI.c" lastModified="15185bfa16c"/>
       </target>
       <target file="GPIO.o" lastModified="15185733284">
          <source file="..\..\..\app\GPIO.c" lastModified="1518573053a"/>

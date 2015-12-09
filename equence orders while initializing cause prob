@@ -1,0 +1,68 @@
+[33mcommit 085815c6b89e5c076f895ce4286205b0291db870[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Wed Dec 9 15:52:48 2015 +0800
+
+    Error ensured.
+    Irregular sequence orders while initializing cause problems.
+    Problem solved by reordering the sequence.
+    
+    Method to solve the problem:
+    1. Read back the value in the register in debugger mode.
+    2. Compare the simulated value with the expected value.
+
+[33mcommit 4f46fa3cb7b0de5228ef264fe87618aca20112bb[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Wed Dec 9 14:53:29 2015 +0800
+
+    Checking for errors.
+    Error found occurred at PIN_4.
+    Not 100% sure due to coIDE debugger problem occurs.
+    PC reboots to ensure the error found.
+
+[33mcommit 1ad165a7127304a3a41d863fa92f52932f68eb76[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Mon Dec 7 18:39:11 2015 +0800
+
+    Troubleshooting
+
+[33mcommit b430583a8d00071e26b72e2d0fb90af5a383e113[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Sun Dec 6 18:21:18 2015 +0800
+
+    No result from last time
+
+[33mcommit 6318175d9c4cc006aac29de5206f2d5ffabeee7f[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Wed Dec 2 18:57:15 2015 +0800
+
+    SPI configured but still cannot sense the output
+
+[33mcommit 8b090248a7fd73553cbbd31c317b12547a8a18ad[m
+Author: mygamelife <mygamelife1@gmail.com>
+Date:   Fri Nov 27 12:18:47 2015 +0800
+
+    A pptx has added
+
+[33mcommit 9117b8d9af4c3154a2bdfd191d581f5e60c07666[m
+Author: Raydivine <radivine00@gmail.com>
+Date:   Wed Nov 25 15:39:39 2015 +0800
+
+    A few functions are created for SPI configuration
+
+[33mcommit 789127cce844066086168e106cfef0f85e888129[m
+Author: Chu Jaan Horng <jjaanhorng@gmail.com>
+Date:   Wed Nov 18 18:22:31 2015 +0800
+
+    Initialization of SPI (data structure)
+
+[33mcommit 7f90bd607b113bbeb21eda879a496ded9dddd52b[m
+Author: Chu Jaan Horng <jjaanhorng@gmail.com>
+Date:   Wed Nov 18 14:35:36 2015 +0800
+
+    remote from chaoSAD has changed to jhorng
+
+[33mcommit 07e371041740f2ef7e09041e16c5bcbc1232593b[m
+Author: Twinkle <twinkle0613@live.com>
+Date:   Fri Oct 9 04:52:44 2015 +0800
+
+    First Upload
