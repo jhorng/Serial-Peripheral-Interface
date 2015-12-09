@@ -28,10 +28,11 @@ void pullUpDown(int pinNum, GPIO *port, int pull){
 	port->PUPDR |= pull << (pinNum * 2);
 }
 
-uint32_t altFunction(int pinNum, GPIO *port, int AF){
+void altFunction(int pinNum, GPIO *port, int AF){
+	uint32_t returnAF;
 	port->AFRL &= ~(16 << (pinNum * 4));
 	port->AFRL |= AF << (pinNum * 4);
-	return port->AFRL;
+	returnAF = port->AFRL;
 }
 
 void outputType(int pinNum, GPIO *port, int type){

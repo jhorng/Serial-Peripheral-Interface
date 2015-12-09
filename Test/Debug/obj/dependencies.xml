@@ -7,7 +7,7 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\SPI.c" lastModified="1517be5d2d7">
+      <source file="..\..\..\app\SPI.c" lastModified="1518562c8cf">
          <include file="..\..\..\app\SPI.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -67,6 +67,9 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pcd_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
+      <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c" lastModified="14c0ebff760">
+         <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h"/>
+      </source>
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\CMSIS\Include\core_cm4.h" lastModified="14c0ebd8278">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\CMSIS\Include\core_cmInstr.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\CMSIS\Include\core_cmFunc.h"/>
@@ -114,6 +117,9 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c" lastModified="14c0ebff760">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h"/>
       </source>
+      <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c" lastModified="14c0ebff760">
+         <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h"/>
+      </source>
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
@@ -126,7 +132,7 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\main.c" lastModified="1517be50ba6">
+      <source file="..\..\..\app\main.c" lastModified="151857c82c1">
          <include file="..\..\..\app\Config\stm32f4xx.h"/>
          <include file="..\..\..\app\SPI.h"/>
          <include file="..\..\..\app\RCC.h"/>
@@ -215,12 +221,12 @@
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_hash_ex.h"/>
       </source>
-      <source file="..\..\..\app\GPIO.h" lastModified="1517bb933f7">
+      <source file="..\..\..\app\GPIO.h" lastModified="15185733060">
       </source>
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\GPIO.c" lastModified="1517bc826ac">
+      <source file="..\..\..\app\GPIO.c" lastModified="1518573053a">
          <include file="..\..\..\app\GPIO.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -302,7 +308,7 @@
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h"/>
       </source>
-      <source file="..\..\..\app\SPI.h" lastModified="1517bda1af7">
+      <source file="..\..\..\app\SPI.h" lastModified="151854ab1e1">
       </source>
    </includePath>
 </dependencies>

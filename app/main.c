@@ -13,6 +13,11 @@ void delay(uint32_t delayCount){
 int main(){
 	uint32_t status, writeData, readData, AF_PIN_2, AF_PIN_6;
 
+	uint32_t fsclk = HAL_RCC_GetClockConfig();
+	uint32_t fhclk = HAL_RCC_GetHCLKFreq();
+	uint32_t fpclk1 = HAL_RCC_GetPCLK1Freq();
+	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
+
 	/****
 	 *	Pin 2 = SPI_SCK
 	 *	Pin 5 = SPI_MISO
@@ -21,7 +26,7 @@ int main(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
 	//pullUpDown(PIN_2, PORTE, GPIO_PULL_DOWN);
-	AF_PIN_2 = altFunction(PIN_2, PORTE, AF5);
+	altFunction(PIN_2, PORTE, AF5);
 	//outputType(PIN_2, PORTE, GPIO_PUSH_PULL);
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_5, PORTE);
@@ -31,7 +36,7 @@ int main(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_6, PORTE);
 	//pullUpDown(PIN_6, PORTE, GPIO_PULL_UP);
-	AF_PIN_6 = altFunction(PIN_6, PORTE, AF5);
+	altFunction(PIN_6, PORTE, AF5);
 	//outputType(PIN_6, PORTE, GPIO_PUSH_PULL);
 
 	/****
@@ -49,9 +54,9 @@ int main(){
 	configureFrameFormat(TI_Mode);
 	configureMode(Master_Mode);
 	configureDirection(BiDirec_1_Line);
-	//configureOutput(Transmit);
+	configureOutput(Transmit);
 	//configureOutput(Receive);
-	configureReceive(Receive_Only_Disable);
+	//configureReceive(Receive_Only_Disable);
 	//configureReceive(Receive_Only_Enable);
 	//configureDataFrame(Bit8);
 	//enableCRC(CRCdisable);
@@ -71,14 +76,15 @@ int main(){
 	//writeData = 0x1;
 
 	while(1){
+		configureOutput(Transmit);
 		//writeOne(PIN_4, PORTE);
 		//delay(10000);
 		//writeZero(PIN_4, PORTE);
 		//delay(10);
-		delay(10000);
-		sendData(0x8);
+		//delay(1000);
+		sendData(0x08);
 		//readData = SPI_reg->SPI_DR;
-		delay(10000);
-		status = SPI_reg->SPI_SR;
+		//delay(1000);
+		//status = SPI_reg->SPI_SR;
 	}
 }

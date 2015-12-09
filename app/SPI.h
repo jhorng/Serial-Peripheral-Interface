@@ -54,14 +54,14 @@ struct SPI_t{
 #define SSOE_Disable		0
 #define SSOE_Enable			1
 
-#define BR0          	 	000
-#define BR1          		001
-#define BR2         		010
-#define BR3          		011
-#define BR4         	  	100
-#define BR5          		101
-#define BR6           		110
-#define BR7          	 	111
+#define BR0          	 	000 	// Fpclk/2
+#define BR1          		001		// Fpclk/4
+#define BR2         		010		// Fpclk/8
+#define BR3          		011		// Fpclk/16
+#define BR4         	  	100		// Fpclk/32
+#define BR5          		101		// Fpclk/64
+#define BR6           		110		// Fpclk/128
+#define BR7          	 	111		// Fpclk/256
 
 #define FLAG_TXE  1
 
