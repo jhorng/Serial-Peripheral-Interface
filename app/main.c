@@ -11,6 +11,31 @@ void delay(uint32_t delayCount){
 	}
 }
 
+void SPI4_IRQHandler(void){
+	int status, readData;
+
+	status = SPI_reg->SPI_SR;
+	if (readyReceived){
+		readData = receivedData();
+	}
+	else if (readyTransmit){
+		sendData(0x69); // 8'b01101001
+	}
+}
+
+
+/*****
+ * @brief This function is the global interrupt for DMA reception.
+ *
+ ****/
+void DMA2_Stream0_IRQHandler(void){
+
+}
+
+void DMA2_Stream1_IRQHandler(void){
+
+}
+
 	/****
 	 *	Port -> PORTE
 	 *
@@ -21,7 +46,6 @@ void delay(uint32_t delayCount){
 	 ****/
 
 void masterMode(){
-
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
 	altFunction(PIN_2, PORTE, AF5);
 
@@ -44,8 +68,11 @@ void masterMode(){
 	CRCpolynomial(0x11);
 	configureDataFrame(Bit16);
 	configureBR(BR4);
-	DMAenable(txDMA, Enable);
-	transferDirection(0);
+	interruptSPI(TXRXIE);
+	//DMAenable(txDMA, Enable);
+	//transferDirection(PERIPHERAL_MEMORY);
+	//transferDirection(MEMORY_PERIPHERAL);
+	//transferDirection(MEMORY_MEMORY);
 }
 /*
 void slaveMode(){
@@ -82,12 +109,10 @@ int main(){
 	uint32_t fpclk1 = HAL_RCC_GetPCLK1Freq();
 	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
 
-	/****
-	 *	Pin 2 = SPI_SCK
-	 *	Pin 4 = NSS
-	 *	Pin 5 = SPI_MISO
-	 *	Pin 6 = SPI_MOSI
-	 ****/
+	HAL_NVIC_EnableIRQ(SPI4_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+
 /*
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
 	//pullUpDown(PIN_2, PORTE, GPIO_PULL_DOWN);
@@ -135,17 +160,12 @@ int main(){
 	//slaveMode();
 	enableSPI(Enable);
 
-	//while(1){
+	while(1){
+		//sendData(0x69); // 8'b01101001
+		//readData = receivedData();
 		//configureCRCNext(Next_Transfer);
-		sendData(0x69); // 8'b01101001
-		//readData = receivedByte();
-		configureCRCNext(Next_Transfer);
-		crc = readCRC(Transmit);
+		//crc = readCRC(Transmit);
 		//sendData(0xAF);
-		//tx = SPI_reg->SPI_TXCRCR;
-		//disableSPI(Disable);
-		//readData = SPI_reg->SPI_DR;
-		//delay(1000);
 		status = SPI_reg->SPI_SR;
-	//}
+	}
 }

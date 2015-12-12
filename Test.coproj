@@ -93,13 +93,13 @@
     <File name="app/main.c" path="app/main.c" type="1"/>
     <File name="Config/system_stm32f4xx.c" path="app/Config/system_stm32f4xx.c" type="1"/>
     <File name="app/DMA.c" path="app/DMA.c" type="1"/>
-    <File name="Config/stm32f4xx_hal_conf.h" path="app/Config/stm32f4xx_hal_conf.h" type="1"/>
     <File name="Hardware/stm32f4xx_hal_gpio.c" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c" type="1"/>
+    <File name="Config/stm32f4xx_hal_conf.h" path="app/Config/stm32f4xx_hal_conf.h" type="1"/>
     <File name="Core/core_cm4.h" path="../STM32Cube_FW_F4_V1.5.0/Drivers/CMSIS/Include/core_cm4.h" type="1"/>
-    <File name="app/RCC.h" path="app/RCC.h" type="1"/>
     <File name="Config/startup_stm32f429xx.s" path="app/Config/startup_stm32f429xx.s" type="1"/>
-    <File name="Hardware/stm32f4xx_hal_gpio.h" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h" type="1"/>
+    <File name="app/RCC.h" path="app/RCC.h" type="1"/>
     <File name="Hardware/stm32f4xx_hal_cortex.h" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h" type="1"/>
+    <File name="Hardware/stm32f4xx_hal_gpio.h" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h" type="1"/>
     <File name="Hardware/stm32f4xx_hal_rcc.c" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c" type="1"/>
     <File name="Hardware/stm32f4xx_hal_spi.h" path="../STM32Cube_FW_F4_V1.5.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h" type="1"/>
     <File name="Core" path="" type="2"/>

@@ -61,6 +61,10 @@ struct DMA_Type{
 #define MEMORY_INCREMENT		(1 << 10)
 #define PERIPHERAL_INCEREMENT	(1 << 9)
 
+#define PERIPHERAL_MEMORY		0
+#define MEMORY_PERIPHERAL		1
+#define MEMORY_MEMORY			2
+
 #define DMA_FLOW_CONTROL		~(1 << 5)
 #define PERIPHERAL_FLOW_CONTROL	(1 << 5)
 

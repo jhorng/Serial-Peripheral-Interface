@@ -16,78 +16,86 @@ struct SPI_t{
 	volatile uint32_t SPI_I2SPR;
 };
 
-#define Disable				0
-#define Enable				1
+#define Disable					0
+#define Enable					1
 
-#define Receive				0
-#define Transmit			1
+#define Receive					0
+#define Transmit				1
 
-#define UniDirec_2_Line		0
-#define BiDirec_1_Line		1
+#define UniDirec_2_Line			0
+#define BiDirec_1_Line			1
 
-#define Full_Duplex			0
-#define Output_Disable		1
+#define Full_Duplex				0
+#define Output_Disable			1
 
-#define Slave_Mode			0
-#define Master_Mode			1
+#define Slave_Mode				0
+#define Master_Mode				1
 
-#define Bit8				0	// DFF = 8-bits
-#define Bit16				1	// DFF = 16-bits
+#define Bit8					0	// DFF = 8-bits
+#define Bit16					1	// DFF = 16-bits
 
-#define Motorola_Mode		0
-#define TI_Mode				1
+#define Motorola_Mode			0
+#define TI_Mode					1
 
-#define MSB					0
-#define LSB					1
+#define MSB						0
+#define LSB						1
 
-#define Clock1				1
-#define Clock2				2
-#define Clock3				3
-#define Clock4				4
+#define Clock1					1
+#define Clock2					2
+#define Clock3					3
+#define Clock4					4
 
-#define CRCdisable			0
-#define CRCenable			1
+#define CRCdisable				0
+#define CRCenable				1
 
-#define No_Phase			0
-#define Next_Transfer		1
+#define No_Phase				0
+#define Next_Transfer			1
 
-#define SSMdisable			0
-#define SSMenable			1
+#define SSMdisable				0
+#define SSMenable				1
 
-#define SSOE_Disable		0
-#define SSOE_Enable			1
+#define SSOE_Disable			0
+#define SSOE_Enable				1
 
-#define rxDMA				0
-#define txDMA				1
+#define rxDMA					0
+#define txDMA					1
 
-#define BR0          	 	000 	// Fpclk/2
-#define BR1          		001		// Fpclk/4
-#define BR2         		010		// Fpclk/8
-#define BR3          		011		// Fpclk/16
-#define BR4         	  	100		// Fpclk/32
-#define BR5          		101		// Fpclk/64
-#define BR6           		110		// Fpclk/128
-#define BR7          	 	111		// Fpclk/256
+#define BR0          	 		0	// Fpclk/2
+#define BR1          			1	// Fpclk/4
+#define BR2         			2	// Fpclk/8
+#define BR3          			3	// Fpclk/16
+#define BR4         	  		4	// Fpclk/32
+#define BR5          			5	// Fpclk/64
+#define BR6           			6	// Fpclk/128
+#define BR7          		 	7	// Fpclk/256
 
-#define FLAG_FRE			8
-#define FLAG_BSY			7
-#define FLAG_OVR			6
-#define FLAG_MODF			5
-#define FLAG_CRCERR			4
-#define FLAG_UDR			3
-#define FLAG_CHSIDE			2
-#define FLAG_TXE			1
-#define FLAG_RXNE			0
+#define RXNEIE					1
+#define TXEIE					2
+#define TXRXIE					3
 
-#define readyTransmit    	getSPI4Status(FLAG_TXE)
-#define readyReceived    	getSPI4Status(FLAG_RXNE)
-#define isBusy				getSPI4Status(FLAG_BSY)
+#define DMA_RXNEIE				1
+#define DMA_TXEIE				2
+#define DMA_TXRXIE				3
 
-#define SPI_reg	((SPI*)0x40013400)
+#define FLAG_FRE				8
+#define FLAG_BSY				7
+#define FLAG_OVR				6
+#define FLAG_MODF				5
+#define FLAG_CRCERR				4
+#define FLAG_UDR				3
+#define FLAG_CHSIDE				2
+#define FLAG_TXE				1
+#define FLAG_RXNE				0
 
-int getSPI4Status( int posBit );
+#define readyTransmit    		getSPI4Status(FLAG_TXE)
+#define readyReceived    		getSPI4Status(FLAG_RXNE)
+#define isBusy					getSPI4Status(FLAG_BSY)
+
+#define SPI_reg					((SPI*)0x40013400)
+
+int getSPI4Status(int posBit);
 void sendData(uint8_t Data);
-uint8_t receivedByte(void);
+uint8_t receivedData(void);
 uint32_t readCRC(int path);
 void enableSPI(int SPE);
 void disableSPI(int SPE);
@@ -107,5 +115,6 @@ void configureBR(int baudRate);
 void configureSS(int SS);
 void CRCpolynomial(int polynomial);
 void DMAenable(int dma, int enable);
+void interruptSPI(int IE);
 
 #endif // __SPI_H__

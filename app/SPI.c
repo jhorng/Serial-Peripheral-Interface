@@ -6,7 +6,7 @@ void sendData(uint8_t Data){
 	SPI_reg->SPI_DR = Data;
 }
 
-uint8_t receivedByte(void){
+uint8_t receivedData(void){
    uint32_t checkSR = SPI_reg->SPI_SR;
    while(!readyReceived);
    uint32_t checkDR = SPI_reg->SPI_DR;
@@ -27,7 +27,7 @@ uint32_t readCRC(int path){
 	return checkCRC;
 }
 
-int getSPI4Status( int posBit ){
+int getSPI4Status(int posBit){
   uint32_t checkSR = SPI_reg->SPI_SR;
   return ((SPI_reg->SPI_SR  >> posBit) & 1 );
 }
@@ -214,4 +214,20 @@ void DMAenable(int dma, int enable){
 	}
 
 	returnDMA = SPI_reg->SPI_CR2;
+}
+
+void interruptSPI(int IE){
+	uint32_t returnInterrupt;
+	SPI_reg->SPI_CR2 &= ~(3 << 6);
+	SPI_reg->SPI_CR2 |= (IE << 6);
+
+	returnInterrupt = SPI_reg->SPI_CR2;
+}
+
+void interruptSPIwithDMA(int DMAIE){
+	uint32_t returnDMAInterrupt;
+	SPI_reg->SPI_CR2 &= ~(3);
+	SPI_reg->SPI_CR2 |= (DMAIE);
+
+	returnDMAInterrupt = SPI_reg->SPI_CR2;
 }
