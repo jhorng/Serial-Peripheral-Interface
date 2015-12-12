@@ -2,13 +2,20 @@
 #include "RCC.h"
 
 void sendData(uint8_t Data){
-	while( !readyTransmit );
+	while(!readyTransmit);
 	SPI_reg->SPI_DR = Data;
+}
+
+uint8_t receivedByte(void){
+   uint32_t checkSR = SPI_reg->SPI_SR;
+   while(!readyReceived);
+   uint32_t checkDR = SPI_reg->SPI_DR;
+   return SPI_reg->SPI_DR;
 }
 
 int getSPI4Status( int posBit ){
   uint32_t checkSR = SPI_reg->SPI_SR;
-  return (( SPI_reg->SPI_SR  >> posBit) & 1 );
+  return ((SPI_reg->SPI_SR  >> posBit) & 1 );
 }
 
 void enableSPI(int SPE){

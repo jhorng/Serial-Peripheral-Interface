@@ -77,11 +77,13 @@ struct SPI_t{
 #define FLAG_RXNE			0
 
 #define readyTransmit    	getSPI4Status(FLAG_TXE)
+#define readyReceived    	getSPI4Status(FLAG_RXNE)
 
 #define SPI_reg	((SPI*)0x40013400)
 
 int getSPI4Status( int posBit );
 void sendData(uint8_t Data);
+uint8_t receivedByte(void);
 void enableSPI(int SPE);
 void disableSPI(int SPE);
 //void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS);

@@ -16,6 +16,7 @@ void delay(uint32_t delayCount){
 	 *	Pin 5 = SPI4_MISO
 	 *	Pin 6 = SPI4_MOSI
 	 ****/
+/*
 void masterMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
@@ -38,7 +39,7 @@ void masterMode(){
 	configureDataFrame(Bit16);
 	configureBR(BR4);
 }
-
+*/
 void slaveMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
@@ -119,16 +120,17 @@ int main(){
 	//configureSS(SSOE_Enable);
 	//configureMode(Slave_Mode);
 
-	masterMode();
-	//slaveMode();
+	//masterMode();
+	slaveMode();
 	enableSPI(Enable);
 
 	while(1){
 		// = SPI_reg->SPI_TXCRCR;
 		//configureCRCNext(Next_Transfer);
 		sendData(0x69); // 8'b01101001
+		readData = receivedByte();
 		//configureCRCNext(Next_Transfer);
-		sendData(0xAF);
+		//sendData(0xAF);
 		//tx = SPI_reg->SPI_TXCRCR;
 		//disableSPI(Disable);
 		//readData = SPI_reg->SPI_DR;
