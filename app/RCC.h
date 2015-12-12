@@ -45,8 +45,7 @@ struct Rcc_t{
 #define Rcc_reg	((Rcc*)0x40023800)
 
 void gpioUnresetEnableClock(GPIO* port);
-void spiUnresetEnableClock();
-uint32_t spiUnresetClock();
-uint32_t spiEnableClock();
+void spi1UnresetEnableClock();
+void spi4UnresetEnableClock();
 
 #endif // __RCC_H__

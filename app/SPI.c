@@ -12,11 +12,22 @@ int getSPI4Status( int posBit ){
 }
 
 void enableSPI(int SPE){
-	uint32_t returnSPI;
+	uint32_t returnEnSPI;
 	SPI_reg->SPI_CR1 &= ~(1 << 6);
 	SPI_reg->SPI_CR1 |= SPE << 6;
 
-	returnSPI = SPI_reg->SPI_CR1;
+	returnEnSPI = SPI_reg->SPI_CR1;
+}
+
+void disableSPI(int SPE){
+	uint32_t returnDisSPI, statusReg;
+	statusReg = SPI_reg->SPI_SR;
+	while( !(((SPI_reg->SPI_SR) >> FLAG_TXE) & 1) );
+	while( (((SPI_reg->SPI_SR) >> FLAG_BSY) & 1) );
+	SPI_reg->SPI_CR1 &= ~(1 << 6);
+	SPI_reg->SPI_CR1 |= SPE << 6;
+
+	returnDisSPI = SPI_reg->SPI_CR1;
 }
 /*
 //void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS){

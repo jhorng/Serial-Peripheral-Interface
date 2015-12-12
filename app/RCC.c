@@ -7,18 +7,20 @@ void gpioUnresetEnableClock(GPIO* port){
 	Rcc_reg->RCC_AHB1ENR |= (0x00100000 | ~(0 << (valShift)));
 }
 
-void spiUnresetEnableClock(){
-	uint32_t a, b;
-	a = spiUnresetClock();
-	b = spiEnableClock();
+void spi1UnresetEnableClock(){
+	uint32_t returnReset1, returnClk1;
+	Rcc_reg->RCC_APB2RSTR &= ~(1 << 12);
+	Rcc_reg->RCC_APB2ENR |= (1 << 12);
+
+	returnReset1 = Rcc_reg->RCC_APB2RSTR;
+	returnClk1 = Rcc_reg->RCC_APB2ENR;
 }
 
-uint32_t spiUnresetClock(){
+void spi4UnresetEnableClock(){
+	uint32_t returnReset4, returnClk4;
 	Rcc_reg->RCC_APB2RSTR &= ~(1 << 13);
-	return Rcc_reg->RCC_APB2RSTR;
-}
-
-uint32_t spiEnableClock(){
 	Rcc_reg->RCC_APB2ENR |= (1 << 13);
-	return Rcc_reg->RCC_APB2ENR;
+
+	returnReset4 = Rcc_reg->RCC_APB2RSTR;
+	returnClk4 = Rcc_reg->RCC_APB2ENR;
 }
