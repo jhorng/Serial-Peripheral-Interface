@@ -57,8 +57,11 @@ void slaveMode(){
 	spi4UnresetEnableClock();
 	configureFrameFormat(TI_Mode);
 	configureMode(Slave_Mode);
-	configureDirection(BiDirec_1_Line);
-	configureOutput(Receive);
+	configureDirection(UniDirec_2_Line);
+	configureReceive(Output_Disable);
+	enableCRC(CRCenable);
+	CRCpolynomial(0x11);
+	//configureOutput(Receive);
 	configureDataFrame(Bit16);
 	configureBR(BR4);
 }
@@ -124,17 +127,17 @@ int main(){
 	slaveMode();
 	enableSPI(Enable);
 
-	while(1){
+//	while(1){
 		// = SPI_reg->SPI_TXCRCR;
 		//configureCRCNext(Next_Transfer);
-		sendData(0x69); // 8'b01101001
+		//sendData(0x69); // 8'b01101001
 		readData = receivedByte();
-		//configureCRCNext(Next_Transfer);
+		configureCRCNext(Next_Transfer);
 		//sendData(0xAF);
 		//tx = SPI_reg->SPI_TXCRCR;
 		//disableSPI(Disable);
 		//readData = SPI_reg->SPI_DR;
 		//delay(1000);
 		status = SPI_reg->SPI_SR;
-	}
+//	}
 }

@@ -25,8 +25,8 @@ struct SPI_t{
 #define UniDirec_2_Line		0
 #define BiDirec_1_Line		1
 
-#define Receive_Only_Disable	0
-#define Receive_Only_Enable		1
+#define Full_Duplex			0
+#define Output_Disable		1
 
 #define Slave_Mode			0
 #define Master_Mode			1
