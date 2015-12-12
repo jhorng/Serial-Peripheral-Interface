@@ -201,7 +201,7 @@ void CRCpolynomial(int polynomial){
 
 	returnPolynomial = SPI_reg->SPI_CRCPR;
 }
-
+/*
 void DMAenable(int dma, int enable){
 	uint32_t returnDMA;
 	if (dma){
@@ -215,6 +215,7 @@ void DMAenable(int dma, int enable){
 
 	returnDMA = SPI_reg->SPI_CR2;
 }
+*/
 
 void interruptSPI(int IE){
 	uint32_t returnInterrupt;

@@ -7,12 +7,16 @@
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h" lastModified="14c0ebfff30">
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
       </source>
-      <source file="..\..\..\app\DMA.c" lastModified="151956c8c63">
+      <source file="..\..\..\app\SPI.c" lastModified="1519554ac98">
+         <include file="..\..\..\app\SPI.h"/>
+         <include file="..\..\..\app\RCC.h"/>
+      </source>
+      <source file="..\..\..\app\DMA.c" lastModified="151957575bd">
          <include file="..\..\..\app\DMA.h"/>
          <include file="..\..\..\app\RCC.h"/>
          <include file="..\..\..\app\SPI.h"/>
       </source>
-      <source file="..\..\..\app\RCC.h" lastModified="151956c904b">
+      <source file="..\..\..\app\RCC.h" lastModified="1519559cfe5">
          <include file="..\..\..\app\GPIO.h"/>
       </source>
       <source file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h" lastModified="14c0ebff760">
@@ -24,7 +28,7 @@
       </source>
       <source file="..\..\..\app\Config\system_stm32f4xx.h" lastModified="151956c8c63">
       </source>
-      <source file="..\..\..\app\RCC.c" lastModified="151956c8c63">
+      <source file="..\..\..\app\RCC.c" lastModified="1519569a21b">
          <include file="..\..\..\app\GPIO.h"/>
          <include file="..\..\..\app\RCC.h"/>
       </source>
@@ -302,6 +306,12 @@
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h"/>
          <include file="..\..\..\..\STM32Cube_FW_F4_V1.5.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h"/>
+      </source>
+      <source file="..\..\..\app\SPI.h" lastModified="1519555ae41">
+      </source>
+      <source file="..\..\..\app\DMA.h" lastModified="151957220e8">
+         <include file="..\..\..\app\SPI.h"/>
+         <include file="..\..\..\app\RCC.h"/>
       </source>
    </includePath>
 </dependencies>

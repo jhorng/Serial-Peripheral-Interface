@@ -42,11 +42,14 @@ struct Rcc_t{
 	volatile uint32_t RCC_PLLI2SCFGR;	// RCC PLLI2S configuration register
 };
 
+#define dma1	0
+#define	dma2	1
+
 #define Rcc_reg	((Rcc*)0x40023800)
 
 void gpioUnresetEnableClock(GPIO* port);
 void spi1UnresetEnableClock();
 void spi4UnresetEnableClock();
-void dmaUnresetEnableClock();
+void dmaUnresetEnableClock(int dma);
 
 #endif // __RCC_H__

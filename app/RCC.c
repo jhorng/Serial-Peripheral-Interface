@@ -2,9 +2,14 @@
 #include "RCC.h"
 
 void gpioUnresetEnableClock(GPIO* port){
+	uint32_t returnGPIOReset, returnGPIOClock;
+
 	int valShift = ((int)port - (0x40020000))/(0x400);
 	Rcc_reg->RCC_AHB1RSTR &= ~(1 << (valShift));
-	Rcc_reg->RCC_AHB1ENR |= (0x00100000 | ~(0 << (valShift)));
+	Rcc_reg->RCC_AHB1ENR |= (0x00100000 | (1 << (valShift)));
+
+	returnGPIOReset = Rcc_reg->RCC_AHB1RSTR;
+	returnGPIOClock = Rcc_reg->RCC_AHB1ENR;
 }
 
 void spi1UnresetEnableClock(){
@@ -25,11 +30,18 @@ void spi4UnresetEnableClock(){
 	returnClk4 = Rcc_reg->RCC_APB2ENR;
 }
 
-void dmaUnresetEnableClock(){
+void dmaUnresetEnableClock(int dma){
 	uint32_t returnDMAReset, returnDMAClock;
-	Rcc_reg->RCC_AHB1RSTR &= ~(3 << 21);
-	Rcc_reg->RCC_AHB1ENR |= (3 << 21);
+	if (dma){
+		Rcc_reg->RCC_AHB1RSTR &= ~(1 << 22);
+		Rcc_reg->RCC_AHB1ENR |= (1 << 22);
+	}
+	else{
+		Rcc_reg->RCC_AHB1RSTR &= ~(1 << 21);
+		Rcc_reg->RCC_AHB1ENR |= (1 << 21);
+	}
 
 	returnDMAReset = Rcc_reg->RCC_AHB1RSTR;
 	returnDMAClock = Rcc_reg->RCC_AHB1ENR;
 }
+

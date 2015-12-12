@@ -28,12 +28,26 @@ void SPI4_IRQHandler(void){
  * @brief This function is the global interrupt for DMA reception.
  *
  ****/
+/*
 void DMA2_Stream0_IRQHandler(void){
+	int status, readData;
 
-}
+	status = SPI_reg->SPI_SR;
+	DMAenable(rxDMA, Enable);
+	transferDirection(MEMORY_PERIPHERAL);
+}*/
 
+/*****
+ * @brief This function is the global interrupt for DMA transmission.
+ *
+ ****/
 void DMA2_Stream1_IRQHandler(void){
+	int status, status2, readData;
 
+	status = SPI_reg->SPI_SR;
+	if (readyTransmit){
+		sendData(0x69); // 8'b01101001
+	}
 }
 
 	/****
@@ -59,6 +73,8 @@ void masterMode(){
 	altFunction(PIN_6, PORTE, AF5);
 
 	spi4UnresetEnableClock();
+	dmaUnresetEnableClock(dma2);
+
 	configureFrameFormat(TI_Mode);
 	configureMode(Master_Mode);
 	configureDirection(UniDirec_2_Line);
@@ -68,9 +84,11 @@ void masterMode(){
 	CRCpolynomial(0x11);
 	configureDataFrame(Bit16);
 	configureBR(BR4);
-	interruptSPI(TXRXIE);
-	//DMAenable(txDMA, Enable);
-	//transferDirection(PERIPHERAL_MEMORY);
+	//interruptSPI(TXRXIE);
+	interruptSPIwithDMA(DMA_TXEIE);
+	configDMA2(Transmit);	// Peripheral to memory
+	enableDMA2();
+	//getStatus();
 	//transferDirection(MEMORY_PERIPHERAL);
 	//transferDirection(MEMORY_MEMORY);
 }
@@ -102,15 +120,15 @@ void slaveMode(){
 }
 */
 int main(){
-	uint32_t status, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
+	uint32_t status1, status2, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
 
 	uint32_t fsclk = HAL_RCC_GetClockConfig();
 	uint32_t fhclk = HAL_RCC_GetHCLKFreq();
 	uint32_t fpclk1 = HAL_RCC_GetPCLK1Freq();
 	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
 
-	HAL_NVIC_EnableIRQ(SPI4_IRQn);
-	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
+	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 /*
@@ -166,6 +184,6 @@ int main(){
 		//configureCRCNext(Next_Transfer);
 		//crc = readCRC(Transmit);
 		//sendData(0xAF);
-		status = SPI_reg->SPI_SR;
+		status1 = SPI_reg->SPI_SR;
 	}
 }

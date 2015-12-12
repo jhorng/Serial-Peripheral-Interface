@@ -116,5 +116,6 @@ void configureSS(int SS);
 void CRCpolynomial(int polynomial);
 void DMAenable(int dma, int enable);
 void interruptSPI(int IE);
+//void interruptSPIwithDMA(int DMAIE);
 
 #endif // __SPI_H__
