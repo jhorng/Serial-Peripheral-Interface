@@ -34,8 +34,11 @@ void masterMode(){
 	spi4UnresetEnableClock();
 	configureFrameFormat(TI_Mode);
 	configureMode(Master_Mode);
-	configureDirection(BiDirec_1_Line);
-	configureOutput(Transmit);
+	configureDirection(UniDirec_2_Line);
+	//configureOutput(Transmit);
+	configureReceive(Full_Duplex);
+	enableCRC(CRCenable);
+	CRCpolynomial(0x11);
 	configureDataFrame(Bit16);
 	configureBR(BR4);
 }
