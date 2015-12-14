@@ -2,6 +2,7 @@
 #include "SPI.h"
 #include "RCC.h"
 #include "GPIO.h"
+#include "DMA.h"
 #include <stdint.h>
 
 void delay(uint32_t delayCount){
@@ -11,12 +12,14 @@ void delay(uint32_t delayCount){
 }
 
 	/****
+	 *	Port -> PORTE
+	 *
 	 *	Pin 2 = SPI4_SCK
 	 *	Pin 4 = SPI4_NSS
 	 *	Pin 5 = SPI4_MISO
 	 *	Pin 6 = SPI4_MOSI
 	 ****/
-/*
+
 void masterMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
@@ -41,8 +44,10 @@ void masterMode(){
 	CRCpolynomial(0x11);
 	configureDataFrame(Bit16);
 	configureBR(BR4);
+	DMAenable(txDMA, Enable);
+	transferDirection(0);
 }
-*/
+/*
 void slaveMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
@@ -68,9 +73,9 @@ void slaveMode(){
 	configureDataFrame(Bit16);
 	configureBR(BR4);
 }
-
+*/
 int main(){
-	uint32_t status, writeData, readData, AF_PIN_2, AF_PIN_6, tx;
+	uint32_t status, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
 
 	uint32_t fsclk = HAL_RCC_GetClockConfig();
 	uint32_t fhclk = HAL_RCC_GetHCLKFreq();
@@ -126,21 +131,21 @@ int main(){
 	//configureSS(SSOE_Enable);
 	//configureMode(Slave_Mode);
 
-	//masterMode();
-	slaveMode();
+	masterMode();
+	//slaveMode();
 	enableSPI(Enable);
 
-//	while(1){
-		// = SPI_reg->SPI_TXCRCR;
+	//while(1){
 		//configureCRCNext(Next_Transfer);
-		//sendData(0x69); // 8'b01101001
-		readData = receivedByte();
+		sendData(0x69); // 8'b01101001
+		//readData = receivedByte();
 		configureCRCNext(Next_Transfer);
+		crc = readCRC(Transmit);
 		//sendData(0xAF);
 		//tx = SPI_reg->SPI_TXCRCR;
 		//disableSPI(Disable);
 		//readData = SPI_reg->SPI_DR;
 		//delay(1000);
 		status = SPI_reg->SPI_SR;
-//	}
+	//}
 }

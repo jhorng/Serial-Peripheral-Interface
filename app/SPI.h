@@ -57,6 +57,9 @@ struct SPI_t{
 #define SSOE_Disable		0
 #define SSOE_Enable			1
 
+#define rxDMA				0
+#define txDMA				1
+
 #define BR0          	 	000 	// Fpclk/2
 #define BR1          		001		// Fpclk/4
 #define BR2         		010		// Fpclk/8
@@ -78,12 +81,14 @@ struct SPI_t{
 
 #define readyTransmit    	getSPI4Status(FLAG_TXE)
 #define readyReceived    	getSPI4Status(FLAG_RXNE)
+#define isBusy				getSPI4Status(FLAG_BSY)
 
 #define SPI_reg	((SPI*)0x40013400)
 
 int getSPI4Status( int posBit );
 void sendData(uint8_t Data);
 uint8_t receivedByte(void);
+uint32_t readCRC(int path);
 void enableSPI(int SPE);
 void disableSPI(int SPE);
 //void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS);
@@ -101,5 +106,6 @@ void enableSSM(int en_SSM);
 void configureBR(int baudRate);
 void configureSS(int SS);
 void CRCpolynomial(int polynomial);
+void DMAenable(int dma, int enable);
 
 #endif // __SPI_H__

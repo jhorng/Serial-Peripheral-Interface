@@ -24,3 +24,12 @@ void spi4UnresetEnableClock(){
 	returnReset4 = Rcc_reg->RCC_APB2RSTR;
 	returnClk4 = Rcc_reg->RCC_APB2ENR;
 }
+
+void dmaUnresetEnableClock(){
+	uint32_t returnDMAReset, returnDMAClock;
+	Rcc_reg->RCC_AHB1RSTR &= ~(3 << 21);
+	Rcc_reg->RCC_AHB1ENR |= (3 << 21);
+
+	returnDMAReset = Rcc_reg->RCC_AHB1RSTR;
+	returnDMAClock = Rcc_reg->RCC_AHB1ENR;
+}

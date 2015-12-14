@@ -13,6 +13,20 @@ uint8_t receivedByte(void){
    return SPI_reg->SPI_DR;
 }
 
+uint32_t readCRC(int path){
+	uint16_t checkCRC;
+	uint32_t checkSR = SPI_reg->SPI_SR;
+	while(isBusy);
+	if (path){
+		checkCRC = SPI_reg->SPI_TXCRCR;
+	}
+	else {
+		checkCRC = SPI_reg->SPI_TXCRCR;
+	}
+
+	return checkCRC;
+}
+
 int getSPI4Status( int posBit ){
   uint32_t checkSR = SPI_reg->SPI_SR;
   return ((SPI_reg->SPI_SR  >> posBit) & 1 );
@@ -186,4 +200,18 @@ void CRCpolynomial(int polynomial){
 	SPI_reg->SPI_CRCPR = polynomial;
 
 	returnPolynomial = SPI_reg->SPI_CRCPR;
+}
+
+void DMAenable(int dma, int enable){
+	uint32_t returnDMA;
+	if (dma){
+		SPI_reg->SPI_CR2 &= ~(1 << 1);
+		SPI_reg->SPI_CR2 |= (enable << 1);
+	}
+	else {
+		SPI_reg->SPI_CR2 &= ~(1);
+		SPI_reg->SPI_CR2 |= enable;
+	}
+
+	returnDMA = SPI_reg->SPI_CR2;
 }

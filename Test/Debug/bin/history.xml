@@ -1,18 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g2 -Map=Test.map -O0 --gc-sections -LC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface -TC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface/stm32f429zi_flash.ld -g">
-      <target file="Test.elf" lastModified="151955ffa39">
-         <source file="..\obj\SPI.o" lastModified="151955ff7e9"/>
-         <source file="..\obj\stm32f4xx_hal_cortex.o" lastModified="15195547b7c"/>
-         <source file="..\obj\RCC.o" lastModified="151955ff6ff"/>
-         <source file="..\obj\stm32f4xx_hal.o" lastModified="15195547979"/>
-         <source file="..\obj\stm32f4xx_hal_spi.o" lastModified="15195547728"/>
-         <source file="..\obj\main.o" lastModified="151955ff6b1"/>
-         <source file="..\obj\system_stm32f4xx.o" lastModified="15195547bf9"/>
-         <source file="..\obj\stm32f4xx_hal_gpio.o" lastModified="15195547ce3"/>
-         <source file="..\obj\startup_stm32f429xx.o" lastModified="15195547880"/>
-         <source file="..\obj\stm32f4xx_hal_rcc.o" lastModified="15195547a82"/>
-         <source file="..\obj\GPIO.o" lastModified="151955ff76c"/>
+   <processor signature="4.9.3 -mcpu=cortex-m4 -mthumb -g2 -Map=Test.map -O0 --gc-sections -LC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface -TC:/Users/D203C-01/CoIDE/workspace/Serial-Peripheral-Interface/stm32f429zi_flash.ld -g">
+      <target file="Test.elf" lastModified="1519fef8646">
+         <source file="..\obj\SPI.o" lastModified="1519f499b7c"/>
+         <source file="..\obj\stm32f4xx_hal_cortex.o" lastModified="1519eef6fe6"/>
+         <source file="..\obj\RCC.o" lastModified="1519f499839"/>
+         <source file="..\obj\stm32f4xx_hal.o" lastModified="1519eef6de3"/>
+         <source file="..\obj\stm32f4xx_hal_spi.o" lastModified="1519eef6bb2"/>
+         <source file="..\obj\main.o" lastModified="1519fef83d6"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="1519eef7072"/>
+         <source file="..\obj\DMA.o" lastModified="1519febf395"/>
+         <source file="..\obj\stm32f4xx_hal_gpio.o" lastModified="1519eef716c"/>
+         <source file="..\obj\startup_stm32f429xx.o" lastModified="1519eef6cf9"/>
+         <source file="..\obj\stm32f4xx_hal_rcc.o" lastModified="1519eef6efc"/>
+         <source file="..\obj\GPIO.o" lastModified="1519f499a3b"/>
       </target>
    </processor>
 </history>
