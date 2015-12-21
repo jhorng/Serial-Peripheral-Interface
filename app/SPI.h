@@ -94,7 +94,7 @@ struct SPI_t{
 #define SPI_reg					((SPI*)0x40013400)
 
 int getSPI4Status(int posBit);
-void sendData(uint8_t Data);
+void sendData(int Data);
 uint8_t receivedData(void);
 uint32_t readCRC(int path);
 void enableSPI(int SPE);

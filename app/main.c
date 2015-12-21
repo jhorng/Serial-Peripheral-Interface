@@ -33,8 +33,10 @@ void DMA2_Stream0_IRQHandler(void){
 	int status, readData;
 
 	status = SPI_reg->SPI_SR;
-	DMAenable(rxDMA, Enable);
-	transferDirection(MEMORY_PERIPHERAL);
+	if (readyReceived){
+		readData = receivedData();
+	}
+	clearFlag();
 }*/
 
 /*****
@@ -45,9 +47,13 @@ void DMA2_Stream1_IRQHandler(void){
 	int status, status2, readData;
 
 	status = SPI_reg->SPI_SR;
+	getStatus();
 	if (readyTransmit){
-		sendData(0x69); // 8'b01101001
+		//interruptSPIwithDMA(DMA_TXEIE);
+		//sendData(0x69); // 8'b01101001
 	}
+	//enableDMA2Transmit();
+	clearFlag();
 }
 
 	/****
@@ -85,12 +91,9 @@ void masterMode(){
 	configureDataFrame(Bit16);
 	configureBR(BR4);
 	//interruptSPI(TXRXIE);
-	interruptSPIwithDMA(DMA_TXEIE);
-	configDMA2(Transmit);	// Peripheral to memory
-	enableDMA2();
-	//getStatus();
-	//transferDirection(MEMORY_PERIPHERAL);
-	//transferDirection(MEMORY_MEMORY);
+	//interruptSPIwithDMA(DMA_TXEIE);
+	configDMA2Transmit();	// memory to Peripheral
+	//configDMA2Receive();    // Peripheral to memory
 }
 /*
 void slaveMode(){
@@ -131,52 +134,12 @@ int main(){
 	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
-/*
-	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
-	//pullUpDown(PIN_2, PORTE, GPIO_PULL_DOWN);
-	altFunction(PIN_2, PORTE, AF5);
-	//outputType(PIN_2, PORTE, GPIO_PUSH_PULL);
-
-	configurePin(GPIO_MODE_ALTFUNC, PIN_4, PORTE);
-	//pullUpDown(PIN_4, PORTE, GPIO_PULL_DOWN);
-	altFunction(PIN_4, PORTE, AF5);
-	//outputType(PIN_4, PORTE, GPIO_PUSH_PULL);
-
-	configurePin(GPIO_MODE_ALTFUNC, PIN_5, PORTE);
-	//pullUpDown(PIN_5, PORTE, GPIO_PULL_DOWN);
-	altFunction(PIN_5, PORTE, AF5);
-	//outputType(PIN_5, PORTE, GPIO_PUSH_PULL);
-
-	configurePin(GPIO_MODE_ALTFUNC, PIN_6, PORTE);
-	//pullUpDown(PIN_6, PORTE, GPIO_PULL_UP);
-	altFunction(PIN_6, PORTE, AF5);
-	//outputType(PIN_6, PORTE, GPIO_PUSH_PULL);
-*/
-	//configureSPI(UniDirec_2_Line, Transmit, Receive_Only_Disable, TI_Mode, Master_Mode, Bit16, MSB, Clock1, CRCdisable, SSMenable, BR1, SSOE_Enable);
-	//configureSPI(BiDirec_1_Line, Receive, Receive_Only_Disable, TI_Mode, Bit8, MSB, Clock1, CRCdisable, SSMenable, BR1, SSOE_Enable);
-
-	//spiUnresetEnableClock();
-	//configureFrameFormat(TI_Mode);
-	//configureMode(Master_Mode);
-	//configureDirection(BiDirec_1_Line);
-	//configureOutput(Transmit);
-	//configureOutput(Receive);
-	//configureReceive(Receive_Only_Disable);
-	//configureReceive(Receive_Only_Enable);
-	//configureDataFrame(Bit16);
-	//enableCRC(CRCenable);
-	//CRCpolynomial(0x28);
-	//configureCRCNext(Next_Transfer);
-	//configureBR(BR4);
-	//enableSSM(SSMdisable);
-	//configureLSBFIRST(MSB);
-	//configureClock(Clock1);
-	//configureSS(SSOE_Enable);
-	//configureMode(Slave_Mode);
-
 	masterMode();
 	//slaveMode();
+	enableDMA2Transmit();
+	interruptSPIwithDMA(DMA_TXRXIE);
 	enableSPI(Enable);
+	//enableDMA2Receive();
 
 	while(1){
 		//sendData(0x69); // 8'b01101001

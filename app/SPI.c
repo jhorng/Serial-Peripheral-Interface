@@ -1,7 +1,7 @@
 #include "SPI.h"
 #include "RCC.h"
 
-void sendData(uint8_t Data){
+void sendData(int Data){
 	while(!readyTransmit);
 	SPI_reg->SPI_DR = Data;
 }

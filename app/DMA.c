@@ -2,103 +2,175 @@
 #include "RCC.h"
 #include "SPI.h"
 
-uint32_t buffer1[256];
+uint32_t buffer1[100];
 
 void transferDirection(int direction){
-	uint32_t returnDirection;
+	uint32_t returnDirection1, returnDirection2;
 	dataTransferDirection TransDirec;
 
 	TransDirec = direction;
 	switch(TransDirec){
 	case PERIPHERAL_TO_MEMORY:
-		DMA2->S1.CR &= ~(3 << 6);
+		DMA2->S0.CR &= ~(3 << 6);
 		break;
 	case MEMORY_TO_PERIPHERAL:
 		DMA2->S1.CR &= ~(3 << 6);
 		DMA2->S1.CR |= (1 << 6);
 		break;
 	case MEMORY_TO_MEMORY:
-		DMA2->S1.CR &= ~(3 << 6);
-		DMA2->S1.CR |= (2 << 6);
+		//DMA2->S1.CR &= ~(3 << 6);
+		//DMA2->S1.CR |= (2 << 6);
 		break;
 	default: break;
 	}
 
-	returnDirection = DMA2->S1.CR;
+	returnDirection1 = DMA2->S1.CR;
+	returnDirection2 = DMA2->S0.CR;
 }
 
-void configDMA2(int direc){
-	uint32_t returnDMA, returnPeriAddr, returnMemAddr;
+void configDMA2Transmit(){
+	uint32_t returnDMATransmit, returnPeriAddr1, returnMemAddr1, returnFlagIE1, readBuffer1;
 
 	DMA2->S1.CR &= ~1; //Disable DMA
 
 	DMA2->S1.CR &= ~(7 << 25);	 	// Clear bits Channel selection
 	DMA2->S1.CR |= (ch4 << 25);		// Set Channel selection to channel 4
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(1 << 19);		// Clear CT to target memory 0
 	DMA2->S1.CR &= ~(1 << 18);		// Clear double buffer mode
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 16);		// Clear priority
 	DMA2->S1.CR |= PRIORITY_HIGH;	// Set priority to high
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 13);					// Clear memory data size
 	DMA2->S1.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 11);					// Clear peripheral data size
-	DMA2->S1.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
-	returnDMA = DMA2->S1.CR;
+	//DMA2->S1.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
+	returnDMATransmit = DMA2->S1.CR;
 
-	transferDirection(PERIPHERAL_MEMORY);
-	returnDMA = DMA2->S1.CR;
+	//transferDirection(PERIPHERAL_MEMORY);
+	transferDirection(MEMORY_PERIPHERAL);
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
+	DMA2->S1.CR |= MEMORY_INCREMENT;
+
 	DMA2->S1.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	returnDMA = DMA2->S1.CR;
+	DMA2->S1.CR |= PERIPHERAL_INCEREMENT;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
 	//DMA2->S1.CR |= DMA_FLOW_CONTROL;
 	//DMA2->S1.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
 	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
-	returnDMA = DMA2->S1.CR;
+	returnDMATransmit = DMA2->S1.CR;
 
-	DMA2->S1.NDTR = 5;
+	DMA2->S1.NDTR = 4;
 
-	if (direc){
-		DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));
-		DMA2->S1.M0AR = (uint32_t)buffer1;
-	}
-	else {
-		DMA2->S1.PAR  = (uint32_t)buffer1;
-		DMA2->S1.M0AR = (uint32_t)(&(SPI_reg->SPI_DR));
-	}
+	buffer1[0] = 0x6;
+	//buffer1[1] = 0x5;
+	//buffer1[2] = 0x69;
 
-	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));
+	DMA2->S1.M0AR  = (uint32_t)(&(SPI_reg->SPI_DR)); // Source
+	DMA2->S1.PAR = (uint32_t)buffer1;				 //	Destination
 
-	DMA2->S1.M0AR = (uint32_t)buffer1;
+	DMA2->S1.FCR  &= ~FIFO_DISABLE;
 
-	DMA2->S1.FCR  = FIFO_DISABLE;
-
-	returnDMA = DMA2->S1.CR;
-	returnPeriAddr = DMA2->S1.PAR;
-	returnMemAddr = DMA2->S1.M0AR;
+	returnDMATransmit = DMA2->S1.CR;
+	returnPeriAddr1 = DMA2->S1.PAR;
+	returnMemAddr1 = DMA2->S1.M0AR;
+	returnFlagIE1 = DMA2->LISR;
 }
 
-void enableDMA2(){
+void configDMA2Receive(){
+	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2;
+
+	DMA2->S0.CR &= ~1; //Disable DMA
+
+	DMA2->S0.CR &= ~(7 << 25);	 	// Clear bits Channel selection
+	DMA2->S0.CR |= (ch4 << 25);		// Set Channel selection to channel 4
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(1 << 19);		// Clear CT to target memory 0
+	DMA2->S0.CR &= ~(1 << 18);		// Clear double buffer mode
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 16);		// Clear priority
+	DMA2->S0.CR |= PRIORITY_HIGH;	// Set priority to high
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 13);					// Clear memory data size
+	DMA2->S0.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 11);					// Clear peripheral data size
+	//DMA2->S0.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
+	returnDMAReceive = DMA2->S0.CR;
+
+	//transferDirection(PERIPHERAL_MEMORY);
+	//transferDirection(MEMORY_PERIPHERAL);
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
+	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
+	//DMA2->S1.CR |= DMA_FLOW_CONTROL;
+	//DMA2->S1.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= CLEAR_ALL_INTERRUPT;
+	DMA2->S0.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.NDTR = 4;
+
+	DMA2->S0.PAR  = (uint32_t)buffer1;
+	DMA2->S0.M0AR = (uint32_t)(&(SPI_reg->SPI_DR));
+
+	DMA2->S0.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));
+
+	DMA2->S0.M0AR = (uint32_t)buffer1;
+
+	DMA2->S0.FCR  = ~FIFO_DISABLE;
+
+	returnDMAReceive = DMA2->S0.CR;
+	returnPeriAddr2 = DMA2->S0.PAR;
+	returnMemAddr2 = DMA2->S0.M0AR;
+}
+
+void enableDMA2Transmit(){
 	uint32_t returnDMA2;
 	DMA2->S1.CR |= 1;
 
 	returnDMA2 = DMA2->S1.CR;
 }
 
-uint32_t getStatus(){
-	uint32_t returnHISR;
-	returnHISR = DMA2->HISR;
-	return returnHISR;
+void enableDMA2Receive(){
+	uint32_t returnDMA2;
+	DMA2->S0.CR |= 1;
+
+	returnDMA2 = DMA2->S0.CR;
+}
+
+void getStatus(){
+	uint32_t returnLISR;
+	returnLISR = DMA2->LISR;
+}
+
+void clearFlag(){
+	uint32_t returnFLag;
+	DMA2->LIFCR |= (15 << 8);
+	DMA2->LIFCR |= (1 << 6);
+
+	returnFLag = DMA2->LISR;
 }

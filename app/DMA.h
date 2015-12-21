@@ -38,7 +38,7 @@ struct DMA_Type{
 };
 
 #define DMA_ENABLE		1
-#define FIFO_DISABLE	0
+#define FIFO_DISABLE	(1 << 2)
 
 #define	ch0		0
 #define	ch1		1
@@ -79,8 +79,11 @@ struct DMA_Type{
 #define DMA2   ((DMA_t*)0x40026400)
 
 void transferDirection(int direction);
-void configDMA2(int direc);
-void enableDMA2();
-uint32_t getStatus();
+void configDMA2Transmit();
+void configDMA2Receive();
+void enableDMA2Transmit();
+void enableDMA2Receive();
+void getStatus();
+void clearFlag();
 
 #endif // __DMA_H__
