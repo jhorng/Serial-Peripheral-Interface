@@ -38,7 +38,7 @@ struct DMA_Type{
 };
 
 #define DMA_ENABLE		1
-#define FIFO_DISABLE	(1 << 2)
+#define FIFO_DISABLE	0
 
 #define	ch0		0
 #define	ch1		1
@@ -75,6 +75,12 @@ struct DMA_Type{
 #define CLEAR_ALL_INTERRUPT		~(15 << 1)
 #define ENABLE_ALL_INTERRUPT	(14 << 1)
 
+#define FLAG_TCIF1   11
+#define FLAG_HTIF1   10
+
+#define HalfTransfer		getDMA2Status(FLAG_HTIF1)
+#define CompleteTransfer	getDMA2Status(FLAG_TCIF1)
+
 #define DMA1   ((DMA_t*)0x40026000)
 #define DMA2   ((DMA_t*)0x40026400)
 
@@ -83,7 +89,7 @@ void configDMA2Transmit();
 void configDMA2Receive();
 void enableDMA2Transmit();
 void enableDMA2Receive();
-void getStatus();
+int getDMA2Status(int posBit);
 void clearFlag();
 
 #endif // __DMA_H__

@@ -73,9 +73,9 @@ struct SPI_t{
 #define TXEIE					2
 #define TXRXIE					3
 
-#define DMA_RXNEIE				1
-#define DMA_TXEIE				2
-#define DMA_TXRXIE				3
+#define DMA_RX					1
+#define DMA_TX					2
+#define DMA_TXRX				3
 
 #define FLAG_FRE				8
 #define FLAG_BSY				7
@@ -99,8 +99,6 @@ uint8_t receivedData(void);
 uint32_t readCRC(int path);
 void enableSPI(int SPE);
 void disableSPI(int SPE);
-//void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS);
-void configureSPI(int direction1, int TX_RX1, int RX_ONLY1, int FF1, int DFF1, int MSB_LSB1, int clkSelect1, int en_CRC1, int en_SSM1, int baudRate1, int SS1);
 void configureDirection(int direction);
 void configureOutput(int TX_RX);
 void configureMode(int mode);
@@ -116,6 +114,6 @@ void configureSS(int SS);
 void CRCpolynomial(int polynomial);
 void DMAenable(int dma, int enable);
 void interruptSPI(int IE);
-//void interruptSPIwithDMA(int DMAIE);
+void DMArequest(int DMA);
 
 #endif // __SPI_H__

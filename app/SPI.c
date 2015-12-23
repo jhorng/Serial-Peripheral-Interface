@@ -225,10 +225,10 @@ void interruptSPI(int IE){
 	returnInterrupt = SPI_reg->SPI_CR2;
 }
 
-void interruptSPIwithDMA(int DMAIE){
-	uint32_t returnDMAInterrupt;
+void DMArequest(int DMA){
+	uint32_t returnDMA;
 	SPI_reg->SPI_CR2 &= ~(3);
-	SPI_reg->SPI_CR2 |= (DMAIE);
+	SPI_reg->SPI_CR2 |= (DMA);
 
-	returnDMAInterrupt = SPI_reg->SPI_CR2;
+	returnDMA = SPI_reg->SPI_CR2;
 }

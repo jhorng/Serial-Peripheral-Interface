@@ -11,6 +11,16 @@ void delay(uint32_t delayCount){
 	}
 }
 
+void DMA2Transfer(){
+	int statusSPI, statusDMA;
+
+	statusSPI = SPI_reg->SPI_SR;
+	statusDMA = DMA2->LISR;
+
+	while(! (HalfTransfer & CompleteTransfer));
+	clearFlag();
+}
+
 void SPI4_IRQHandler(void){
 	int status, readData;
 
@@ -46,14 +56,7 @@ void DMA2_Stream0_IRQHandler(void){
 void DMA2_Stream1_IRQHandler(void){
 	int status, status2, readData;
 
-	status = SPI_reg->SPI_SR;
-	getStatus();
-	if (readyTransmit){
-		//interruptSPIwithDMA(DMA_TXEIE);
-		//sendData(0x69); // 8'b01101001
-	}
-	//enableDMA2Transmit();
-	clearFlag();
+	DMA2Transfer();
 }
 
 	/****
@@ -86,12 +89,12 @@ void masterMode(){
 	configureDirection(UniDirec_2_Line);
 	//configureOutput(Transmit);
 	configureReceive(Full_Duplex);
-	enableCRC(CRCenable);
+	//enableCRC(CRCenable);
 	CRCpolynomial(0x11);
-	configureDataFrame(Bit16);
+	configureDataFrame(Bit8);
 	configureBR(BR4);
 	//interruptSPI(TXRXIE);
-	//interruptSPIwithDMA(DMA_TXEIE);
+	DMArequest(DMA_TX);
 	configDMA2Transmit();	// memory to Peripheral
 	//configDMA2Receive();    // Peripheral to memory
 }
@@ -132,21 +135,22 @@ int main(){
 
 	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
 	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+	//HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 	masterMode();
 	//slaveMode();
 	enableDMA2Transmit();
-	interruptSPIwithDMA(DMA_TXRXIE);
 	enableSPI(Enable);
 	//enableDMA2Receive();
 
-	while(1){
+	DMA2Transfer();
+
+	//while(1){
 		//sendData(0x69); // 8'b01101001
 		//readData = receivedData();
 		//configureCRCNext(Next_Transfer);
 		//crc = readCRC(Transmit);
 		//sendData(0xAF);
 		status1 = SPI_reg->SPI_SR;
-	}
+	//}
 }

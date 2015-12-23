@@ -1,8 +1,11 @@
 #include "DMA.h"
 #include "RCC.h"
 #include "SPI.h"
+#include <stdint.h>
 
-uint32_t buffer1[100];
+//uint8_t buffer1[100];
+uint8_t txBuffer[] = "ABC";
+uint8_t rxBuffer[100];
 
 void transferDirection(int direction){
 	uint32_t returnDirection1, returnDirection2;
@@ -46,7 +49,7 @@ void configDMA2Transmit(){
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 13);					// Clear memory data size
-	DMA2->S1.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
+	//DMA2->S1.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 11);					// Clear peripheral data size
@@ -61,26 +64,23 @@ void configDMA2Transmit(){
 	DMA2->S1.CR |= MEMORY_INCREMENT;
 
 	DMA2->S1.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	DMA2->S1.CR |= PERIPHERAL_INCEREMENT;
+	//DMA2->S1.CR |= PERIPHERAL_INCEREMENT;
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
-	//DMA2->S1.CR |= DMA_FLOW_CONTROL;
 	//DMA2->S1.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
-	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.NDTR = 4;
 
-	buffer1[0] = 0x6;
-	//buffer1[1] = 0x5;
-	//buffer1[2] = 0x69;
+	//buffer1[0] = 'A';
 
-	DMA2->S1.M0AR  = (uint32_t)(&(SPI_reg->SPI_DR)); // Source
-	DMA2->S1.PAR = (uint32_t)buffer1;				 //	Destination
+	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
+	DMA2->S1.M0AR = (uint32_t)txBuffer;				 // Source
 
 	DMA2->S1.FCR  &= ~FIFO_DISABLE;
 
@@ -91,7 +91,7 @@ void configDMA2Transmit(){
 }
 
 void configDMA2Receive(){
-	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2;
+	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2, returnFlagIE2, readBuffer2;
 
 	DMA2->S0.CR &= ~1; //Disable DMA
 
@@ -108,44 +108,44 @@ void configDMA2Receive(){
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~(3 << 13);					// Clear memory data size
-	DMA2->S0.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
+	//DMA2->S0.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~(3 << 11);					// Clear peripheral data size
 	//DMA2->S0.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
 	returnDMAReceive = DMA2->S0.CR;
 
-	//transferDirection(PERIPHERAL_MEMORY);
-	//transferDirection(MEMORY_PERIPHERAL);
+	transferDirection(PERIPHERAL_MEMORY);
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
+	DMA2->S0.CR |= MEMORY_INCREMENT;
+
 	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
+	//DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
-	//DMA2->S1.CR |= DMA_FLOW_CONTROL;
-	//DMA2->S1.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
+	//DMA2->S0.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= CLEAR_ALL_INTERRUPT;
-	DMA2->S0.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.NDTR = 4;
 
-	DMA2->S0.PAR  = (uint32_t)buffer1;
-	DMA2->S0.M0AR = (uint32_t)(&(SPI_reg->SPI_DR));
+	//buffer1[0] = 'A';
 
-	DMA2->S0.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));
+	DMA2->S0.M0AR = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
+	DMA2->S0.PAR = (uint32_t)rxBuffer;				 // Source
 
-	DMA2->S0.M0AR = (uint32_t)buffer1;
-
-	DMA2->S0.FCR  = ~FIFO_DISABLE;
+	DMA2->S0.FCR  &= ~FIFO_DISABLE;
 
 	returnDMAReceive = DMA2->S0.CR;
-	returnPeriAddr2 = DMA2->S0.PAR;
-	returnMemAddr2 = DMA2->S0.M0AR;
+	returnMemAddr2 = DMA2->S0.PAR;
+	returnPeriAddr2 = DMA2->S0.M0AR;
+	returnFlagIE2 = DMA2->LISR;
 }
 
 void enableDMA2Transmit(){
@@ -162,9 +162,9 @@ void enableDMA2Receive(){
 	returnDMA2 = DMA2->S0.CR;
 }
 
-void getStatus(){
-	uint32_t returnLISR;
-	returnLISR = DMA2->LISR;
+int getDMA2Status(int posBit){
+  uint32_t checkSR = DMA2->LISR;
+  return ((DMA2->LISR  >> posBit) & 1 );
 }
 
 void clearFlag(){
