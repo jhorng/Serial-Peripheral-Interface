@@ -72,7 +72,7 @@ void configDMA2Transmit(){
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
-	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.NDTR = 4;
@@ -119,10 +119,10 @@ void configDMA2Receive(){
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
-	DMA2->S0.CR |= MEMORY_INCREMENT;
+	//DMA2->S0.CR |= MEMORY_INCREMENT;
 
 	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	//DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
+	DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller

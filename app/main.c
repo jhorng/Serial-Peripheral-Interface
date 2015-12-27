@@ -70,16 +70,16 @@ void DMA2_Stream1_IRQHandler(void){
 
 void masterMode(){
 	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
-	altFunction(PIN_2, PORTE, AF5);
+	altFunctionLow(PIN_2, PORTE, AF5);
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_4, PORTE);
-	altFunction(PIN_4, PORTE, AF5);
+	altFunctionLow(PIN_4, PORTE, AF5);
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_5, PORTE);
-	altFunction(PIN_5, PORTE, AF5);
+	altFunctionLow(PIN_5, PORTE, AF5);
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_6, PORTE);
-	altFunction(PIN_6, PORTE, AF5);
+	altFunctionLow(PIN_6, PORTE, AF5);
 
 	spi4UnresetEnableClock();
 	dmaUnresetEnableClock(dma2);
@@ -94,37 +94,52 @@ void masterMode(){
 	configureDataFrame(Bit8);
 	configureBR(BR4);
 	//interruptSPI(TXRXIE);
-	DMArequest(DMA_TX);
+	DMArequest(DMA_TXRX);
 	configDMA2Transmit();	// memory to Peripheral
-	//configDMA2Receive();    // Peripheral to memory
+	configDMA2Receive();    // Peripheral to memory
 }
-/*
+
+
+/****
+	 *	Port -> PORTE
+	 *
+	 *	Pin 11 = SPI4_NSS
+	 *	Pin 12 = SPI4_SCK
+	 *	Pin 13 = SPI4_MISO
+	 *	Pin 14 = SPI4_MOSI
+	 ****/
 void slaveMode(){
 
-	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
-	altFunction(PIN_2, PORTE, AF5);
+	configurePin(GPIO_MODE_ALTFUNC, PIN_11, PORTE);
+	altFunctionHigh(PIN_11, PORTE, AF5);
 
-	configurePin(GPIO_MODE_ALTFUNC, PIN_4, PORTE);
-	altFunction(PIN_4, PORTE, AF5);
+	configurePin(GPIO_MODE_ALTFUNC, PIN_12, PORTE);
+	altFunctionHigh(PIN_12, PORTE, AF5);
 
-	configurePin(GPIO_MODE_ALTFUNC, PIN_5, PORTE);
-	altFunction(PIN_5, PORTE, AF5);
+	configurePin(GPIO_MODE_ALTFUNC, PIN_13, PORTE);
+	altFunctionHigh(PIN_13, PORTE, AF5);
 
-	configurePin(GPIO_MODE_ALTFUNC, PIN_6, PORTE);
-	altFunction(PIN_6, PORTE, AF5);
+	configurePin(GPIO_MODE_ALTFUNC, PIN_14, PORTE);
+	altFunctionHigh(PIN_14, PORTE, AF5);
 
 	spi4UnresetEnableClock();
+	dmaUnresetEnableClock(dma2);
+
 	configureFrameFormat(TI_Mode);
 	configureMode(Slave_Mode);
 	configureDirection(UniDirec_2_Line);
-	configureReceive(Output_Disable);
-	enableCRC(CRCenable);
+	//configureOutput(Transmit);
+	configureReceive(Full_Duplex);
+	//enableCRC(CRCenable);
 	CRCpolynomial(0x11);
-	//configureOutput(Receive);
-	configureDataFrame(Bit16);
+	configureDataFrame(Bit8);
 	configureBR(BR4);
+	//interruptSPI(TXRXIE);
+	DMArequest(DMA_RX);
+	//configDMA2Transmit();	// memory to Peripheral
+	configDMA2Receive();    // Peripheral to memory
 }
-*/
+
 int main(){
 	uint32_t status1, status2, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
 
@@ -135,22 +150,23 @@ int main(){
 
 	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
 	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+	//HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 	masterMode();
 	//slaveMode();
 	enableDMA2Transmit();
+	enableDMA2Receive();
 	enableSPI(Enable);
-	//enableDMA2Receive();
 
-	//DMA2Transfer();
 
-	while(1){
+	DMA2Transfer();
+
+	//while(1){
 		//sendData(0x69); // 8'b01101001
 		//readData = receivedData();
 		//configureCRCNext(Next_Transfer);
 		//crc = readCRC(Transmit);
 		//sendData(0xAF);
 		status1 = SPI_reg->SPI_SR;
-	}
+	//}
 }

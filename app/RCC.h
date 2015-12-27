@@ -2,7 +2,6 @@
 #define __RCC_H__
 
 #include "GPIO.h"
-#include "Registers.h"
 #include <stdint.h>
 
 typedef struct Rcc_t Rcc;
@@ -42,6 +41,8 @@ struct Rcc_t{
 	volatile uint32_t RCC_SSCGR;		// RCC spread spectrum clock generation register
 	volatile uint32_t RCC_PLLI2SCFGR;	// RCC PLLI2S configuration register
 };
+
+#include "Registers.h"
 
 #define dma1	0
 #define	dma2	1

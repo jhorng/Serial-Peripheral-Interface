@@ -1,7 +1,6 @@
 #ifndef __Registers_H__
 #define __Registers_H__
 
-//#include "HostRCC.h"
 #include <stdint.h>
 
 #ifndef HOST
@@ -9,6 +8,7 @@
 
 #else
   
+#include "HostRCC.h"
 #define RCC_BASE_ADDRESS  (&HostRCC)
 
 #endif // HOST
