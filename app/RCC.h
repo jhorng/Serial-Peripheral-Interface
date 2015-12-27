@@ -2,6 +2,7 @@
 #define __RCC_H__
 
 #include "GPIO.h"
+#include "Registers.h"
 #include <stdint.h>
 
 typedef struct Rcc_t Rcc;
@@ -45,7 +46,7 @@ struct Rcc_t{
 #define dma1	0
 #define	dma2	1
 
-#define Rcc_reg	((Rcc*)0x40023800)
+#define Rcc_reg	((Rcc*)RCC_BASE_ADDRESS)
 
 void gpioUnresetEnableClock(GPIO* port);
 void spi1UnresetEnableClock();

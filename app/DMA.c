@@ -72,7 +72,7 @@ void configDMA2Transmit(){
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
-	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.NDTR = 4;

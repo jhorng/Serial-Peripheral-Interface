@@ -135,7 +135,7 @@ int main(){
 
 	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
 	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	//HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 	masterMode();
 	//slaveMode();
@@ -143,14 +143,14 @@ int main(){
 	enableSPI(Enable);
 	//enableDMA2Receive();
 
-	DMA2Transfer();
+	//DMA2Transfer();
 
-	//while(1){
+	while(1){
 		//sendData(0x69); // 8'b01101001
 		//readData = receivedData();
 		//configureCRCNext(Next_Transfer);
 		//crc = readCRC(Transmit);
 		//sendData(0xAF);
 		status1 = SPI_reg->SPI_SR;
-	//}
+	}
 }
