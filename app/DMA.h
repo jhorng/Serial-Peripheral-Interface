@@ -85,8 +85,8 @@ struct DMA_Type{
 #define DMA2   ((DMA_t*)0x40026400)
 
 void transferDirection(int direction);
-void configDMA2Transmit();
-void configDMA2Receive();
+void configDMA2Transmit(uint32_t source);
+void configDMA2Receive(uint32_t source);
 void enableDMA2Transmit();
 void enableDMA2Receive();
 int getDMA2Status(int posBit);

@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 //uint8_t buffer1[100];
-uint8_t txBuffer[] = "ABC";
-uint8_t rxBuffer[100];
+//uint8_t txBuffer[] = "A";
+//uint8_t rxBuffer[100];
 
 void transferDirection(int direction){
 	uint32_t returnDirection1, returnDirection2;
@@ -31,7 +31,7 @@ void transferDirection(int direction){
 	returnDirection2 = DMA2->S0.CR;
 }
 
-void configDMA2Transmit(){
+void configDMA2Transmit(uint32_t source){
 	uint32_t returnDMATransmit, returnPeriAddr1, returnMemAddr1, returnFlagIE1, readBuffer1;
 
 	DMA2->S1.CR &= ~1; //Disable DMA
@@ -72,15 +72,13 @@ void configDMA2Transmit(){
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
-	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMATransmit = DMA2->S1.CR;
 
-	DMA2->S1.NDTR = 4;
-
-	//buffer1[0] = 'A';
+	DMA2->S1.NDTR = 1;
 
 	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
-	DMA2->S1.M0AR = (uint32_t)txBuffer;				 // Source
+	DMA2->S1.M0AR = (uint32_t)source;				 // Source
 
 	DMA2->S1.FCR  &= ~FIFO_DISABLE;
 
@@ -90,7 +88,7 @@ void configDMA2Transmit(){
 	returnFlagIE1 = DMA2->LISR;
 }
 
-void configDMA2Receive(){
+void configDMA2Receive(uint32_t source){
 	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2, returnFlagIE2, readBuffer2;
 
 	DMA2->S0.CR &= ~1; //Disable DMA
@@ -119,10 +117,10 @@ void configDMA2Receive(){
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
-	//DMA2->S0.CR |= MEMORY_INCREMENT;
+	DMA2->S0.CR |= MEMORY_INCREMENT;
 
 	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
+	//DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
@@ -130,15 +128,15 @@ void configDMA2Receive(){
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= CLEAR_ALL_INTERRUPT;
-	//DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	DMA2->S0.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMAReceive = DMA2->S0.CR;
 
-	DMA2->S0.NDTR = 4;
+	DMA2->S0.NDTR = 1;
 
 	//buffer1[0] = 'A';
 
-	DMA2->S0.M0AR = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
-	DMA2->S0.PAR = (uint32_t)rxBuffer;				 // Source
+	DMA2->S0.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Source
+	DMA2->S0.M0AR = (uint32_t)source;				 // Destination
 
 	DMA2->S0.FCR  &= ~FIFO_DISABLE;
 

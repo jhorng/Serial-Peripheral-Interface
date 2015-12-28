@@ -5,6 +5,9 @@
 #include "DMA.h"
 #include <stdint.h>
 
+uint8_t txBuffer[] = "A";
+uint8_t rxBuffer[100];
+
 void delay(uint32_t delayCount){
 	while(delayCount != 0){
 		delayCount--;
@@ -19,6 +22,7 @@ void DMA2Transfer(){
 
 	while(! (HalfTransfer & CompleteTransfer));
 	clearFlag();
+	statusDMA = DMA2->LISR;
 }
 
 void SPI4_IRQHandler(void){
@@ -38,23 +42,18 @@ void SPI4_IRQHandler(void){
  * @brief This function is the global interrupt for DMA reception.
  *
  ****/
-/*
-void DMA2_Stream0_IRQHandler(void){
-	int status, readData;
 
-	status = SPI_reg->SPI_SR;
-	if (readyReceived){
-		readData = receivedData();
-	}
-	clearFlag();
-}*/
+void DMA2_Stream0_IRQHandler(void){
+	int readData;
+
+	readData = rxBuffer[0];
+}
 
 /*****
  * @brief This function is the global interrupt for DMA transmission.
  *
  ****/
 void DMA2_Stream1_IRQHandler(void){
-	int status, status2, readData;
 
 	DMA2Transfer();
 }
@@ -95,8 +94,8 @@ void masterMode(){
 	configureBR(BR4);
 	//interruptSPI(TXRXIE);
 	DMArequest(DMA_TXRX);
-	configDMA2Transmit();	// memory to Peripheral
-	configDMA2Receive();    // Peripheral to memory
+	configDMA2Transmit(txBuffer);	// memory to Peripheral
+	configDMA2Receive(rxBuffer);    // Peripheral to memory
 }
 
 
@@ -108,6 +107,7 @@ void masterMode(){
 	 *	Pin 13 = SPI4_MISO
 	 *	Pin 14 = SPI4_MOSI
 	 ****/
+/*
 void slaveMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_11, PORTE);
@@ -136,9 +136,9 @@ void slaveMode(){
 	configureBR(BR4);
 	//interruptSPI(TXRXIE);
 	DMArequest(DMA_RX);
-	//configDMA2Transmit();	// memory to Peripheral
-	configDMA2Receive();    // Peripheral to memory
-}
+	//configDMA2Transmit(txBuffer);	// memory to Peripheral
+	configDMA2Receive(rxBuffer);    // Peripheral to memory
+}*/
 
 int main(){
 	uint32_t status1, status2, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
@@ -149,8 +149,8 @@ int main(){
 	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
 
 	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
-	//HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	//HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 	masterMode();
 	//slaveMode();
@@ -158,15 +158,16 @@ int main(){
 	enableDMA2Receive();
 	enableSPI(Enable);
 
+	readData = SPI_reg->SPI_DR;
 
-	DMA2Transfer();
+	//DMA2Transfer();
 
-	//while(1){
+	while(1){
 		//sendData(0x69); // 8'b01101001
 		//readData = receivedData();
 		//configureCRCNext(Next_Transfer);
 		//crc = readCRC(Transmit);
 		//sendData(0xAF);
 		status1 = SPI_reg->SPI_SR;
-	//}
+	}
 }
