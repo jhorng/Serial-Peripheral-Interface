@@ -21,7 +21,7 @@ uint32_t readCRC(int path){
 		checkCRC = SPI_reg->SPI_TXCRCR;
 	}
 	else {
-		checkCRC = SPI_reg->SPI_TXCRCR;
+		checkCRC = SPI_reg->SPI_RXCRCR;
 	}
 
 	return checkCRC;
@@ -50,28 +50,7 @@ void disableSPI(int SPE){
 
 	returnDisSPI = SPI_reg->SPI_CR1;
 }
-/*
-//void configureSPI(int direction, int TX_RX, int RX_ONLY, int FF, int mode, int DFF, int MSB_LSB, int clkSelect, int en_CRC, int en_SSM, int baudRate, int SS){
-void configureSPI(int direction1, int TX_RX1, int RX_ONLY1, int FF1, int DFF1, int MSB_LSB1, int clkSelect1, int en_CRC1, int en_SSM1, int baudRate1, int SS1){
 
-	spiUnresetEnableClock();
-
-	configureDirection(direction1);
-	configureOutput(TX_RX1);
-	configureReceive(RX_ONLY1);
-	configureFrameFormat(FF1);
-	//configureMode(mode);
-	configureDataFrame(DFF1);
-	enableCRC(en_CRC1);
-	configureBR(baudRate1);
-	if(FF1 == Motorola_Mode){
-		enableSSM(en_SSM1);
-		configureLSBFIRST(MSB_LSB1);
-		configureClock(clkSelect1);
-		configureSS(SS1);
-	}
-}
-*/
 void configureDirection(int direction){
 	uint32_t returnDirection;
 	SPI_reg->SPI_CR1 &= ~(1 << 15);
@@ -201,21 +180,6 @@ void CRCpolynomial(int polynomial){
 
 	returnPolynomial = SPI_reg->SPI_CRCPR;
 }
-/*
-void DMAenable(int dma, int enable){
-	uint32_t returnDMA;
-	if (dma){
-		SPI_reg->SPI_CR2 &= ~(1 << 1);
-		SPI_reg->SPI_CR2 |= (enable << 1);
-	}
-	else {
-		SPI_reg->SPI_CR2 &= ~(1);
-		SPI_reg->SPI_CR2 |= enable;
-	}
-
-	returnDMA = SPI_reg->SPI_CR2;
-}
-*/
 
 void interruptSPI(int IE){
 	uint32_t returnInterrupt;

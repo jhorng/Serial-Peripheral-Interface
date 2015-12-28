@@ -3,10 +3,11 @@
 #include "SPI.h"
 #include <stdint.h>
 
-//uint8_t buffer1[100];
-//uint8_t txBuffer[] = "A";
-//uint8_t rxBuffer[100];
-
+/****
+ *  @brief transferDirection() is used to determine the transfer direction of DMA.
+ *         returnDirection1 & returnDirection2 - to read back the value in the reigster.
+ *  @arg   direction
+ ****/
 void transferDirection(int direction){
 	uint32_t returnDirection1, returnDirection2;
 	dataTransferDirection TransDirec;
@@ -21,8 +22,6 @@ void transferDirection(int direction){
 		DMA2->S1.CR |= (1 << 6);
 		break;
 	case MEMORY_TO_MEMORY:
-		//DMA2->S1.CR &= ~(3 << 6);
-		//DMA2->S1.CR |= (2 << 6);
 		break;
 	default: break;
 	}
@@ -31,8 +30,15 @@ void transferDirection(int direction){
 	returnDirection2 = DMA2->S0.CR;
 }
 
+/****
+ *  @brief configDMA2Transmit() is the configuration function for DMA transmission.
+ *         argument source is used to assign the DMA source or destination.
+ *         returnDMATransmit, returnPeriAddr1 & returnMemAddr1  - to read back the value in the reigster.
+ *         returnFlagIE1  - to read back the value in the reigster.
+ *  @arg   source
+ ****/
 void configDMA2Transmit(uint32_t source){
-	uint32_t returnDMATransmit, returnPeriAddr1, returnMemAddr1, returnFlagIE1, readBuffer1;
+	uint32_t returnDMATransmit, returnPeriAddr1, returnMemAddr1, returnFlagIE1;
 
 	DMA2->S1.CR &= ~1; //Disable DMA
 
@@ -49,14 +55,11 @@ void configDMA2Transmit(uint32_t source){
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 13);					// Clear memory data size
-	//DMA2->S1.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= ~(3 << 11);					// Clear peripheral data size
-	//DMA2->S1.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
 	returnDMATransmit = DMA2->S1.CR;
-
-	//transferDirection(PERIPHERAL_MEMORY);
+  
 	transferDirection(MEMORY_PERIPHERAL);
 	returnDMATransmit = DMA2->S1.CR;
 
@@ -64,21 +67,19 @@ void configDMA2Transmit(uint32_t source){
 	DMA2->S1.CR |= MEMORY_INCREMENT;
 
 	DMA2->S1.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	//DMA2->S1.CR |= PERIPHERAL_INCEREMENT;
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
-	//DMA2->S1.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
 	returnDMATransmit = DMA2->S1.CR;
 
 	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
 	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMATransmit = DMA2->S1.CR;
 
-	DMA2->S1.NDTR = 1;
+	DMA2->S1.NDTR = 1;  // Data size 
 
-	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
 	DMA2->S1.M0AR = (uint32_t)source;				 // Source
+	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
 
 	DMA2->S1.FCR  &= ~FIFO_DISABLE;
 
@@ -88,8 +89,15 @@ void configDMA2Transmit(uint32_t source){
 	returnFlagIE1 = DMA2->LISR;
 }
 
+/****
+ *  @brief configDMA2Receive() is the configuration function for DMA reception.
+ *         argument source is used to assign the DMA source or destination.
+ *         returnDMAReceive, returnPeriAddr2 & returnMemAddr2  - to read back the value in the reigster.
+ *         returnFlagIE2  - to read back the value in the reigster.
+ *  @arg   source
+ ****/
 void configDMA2Receive(uint32_t source){
-	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2, returnFlagIE2, readBuffer2;
+	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2, returnFlagIE2;
 
 	DMA2->S0.CR &= ~1; //Disable DMA
 
@@ -106,11 +114,9 @@ void configDMA2Receive(uint32_t source){
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~(3 << 13);					// Clear memory data size
-	//DMA2->S0.CR |= MEMORY_HALF_WORD_SIZE_DATA;	// Set Memory data size to half word data size
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= ~(3 << 11);					// Clear peripheral data size
-	//DMA2->S0.CR |= PERIPHERAL_HALF_WORD_SIZE_DATA;	// Set peripheral data size to half word data size
 	returnDMAReceive = DMA2->S0.CR;
 
 	transferDirection(PERIPHERAL_MEMORY);
@@ -120,20 +126,16 @@ void configDMA2Receive(uint32_t source){
 	DMA2->S0.CR |= MEMORY_INCREMENT;
 
 	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
-	//DMA2->S0.CR |= PERIPHERAL_INCEREMENT;
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
-	//DMA2->S0.CR |= PERIPHERAL_FLOW_CONTROL;	// Set flow controller to peripheral flow control
 	returnDMAReceive = DMA2->S0.CR;
 
 	DMA2->S0.CR &= CLEAR_ALL_INTERRUPT;
 	DMA2->S0.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
 	returnDMAReceive = DMA2->S0.CR;
 
-	DMA2->S0.NDTR = 1;
-
-	//buffer1[0] = 'A';
+	DMA2->S0.NDTR = 1;  // data size
 
 	DMA2->S0.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Source
 	DMA2->S0.M0AR = (uint32_t)source;				 // Destination
@@ -146,6 +148,10 @@ void configDMA2Receive(uint32_t source){
 	returnFlagIE2 = DMA2->LISR;
 }
 
+/****
+ *  @brief  To enable DMA2 for transmision.
+ *          returnDMA2  - to read back the value in the reigster.
+ ****/
 void enableDMA2Transmit(){
 	uint32_t returnDMA2;
 	DMA2->S1.CR |= 1;
@@ -153,6 +159,10 @@ void enableDMA2Transmit(){
 	returnDMA2 = DMA2->S1.CR;
 }
 
+/****
+ *  @brief  To enable DMA2 for reception.
+ *          returnDMA2  - to read back the value in the reigster.
+ ****/
 void enableDMA2Receive(){
 	uint32_t returnDMA2;
 	DMA2->S0.CR |= 1;
@@ -160,11 +170,20 @@ void enableDMA2Receive(){
 	returnDMA2 = DMA2->S0.CR;
 }
 
+/****
+ *  @brief  To get the status flag DMA2.
+ *  @arg    posBit
+ *  @retval the wanted bit in LISR.
+ ****/
 int getDMA2Status(int posBit){
   uint32_t checkSR = DMA2->LISR;
   return ((DMA2->LISR  >> posBit) & 1 );
 }
 
+/****
+ *  @brief  To clear the status flag by setting the bits clear register.
+ *          returnFLag  - to read back the value in the reigster.
+ ****/
 void clearFlag(){
 	uint32_t returnFLag;
 	DMA2->LIFCR |= (15 << 8);

@@ -89,11 +89,7 @@ struct GPIO_t{
 #define PORTG	((GPIO *)GPIOG_BASE_ADDRESS)
 
 void configurePin(int mode, int pinNum, GPIO *port);
-void pullUpDown(int pinNum, GPIO *port, int pull);
-void writeOne(uint16_t pinNum, GPIO *port);
-void writeZero(uint16_t pinNum, GPIO *port);
 void altFunctionLow(int pinNum, GPIO *port, int AF);
 void altFunctionHigh(int pinNum, GPIO *port, int AF);
-void outputType(int pinNum, GPIO *port, int type);
 
 #endif // __GPIO_H__

@@ -1,3 +1,9 @@
+/* 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *
+*/
+
 #include "stm32f4xx.h"
 #include "SPI.h"
 #include "RCC.h"
@@ -14,6 +20,10 @@ void delay(uint32_t delayCount){
 	}
 }
 
+/****
+ * @brief To check the status flag for half transfer and complete transfer.
+ *        This function will keep on polling until the data is completely sent.
+ ****/
 void DMA2Transfer(){
 	int statusSPI, statusDMA;
 
@@ -25,6 +35,10 @@ void DMA2Transfer(){
 	statusDMA = DMA2->LISR;
 }
 
+/*****
+ * @brief This function is the global interrupt for SPI transmission & reception.
+ *        Once interrupt is generated, data will be either write/sent or read/received.
+ ****/
 void SPI4_IRQHandler(void){
 	int status, readData;
 
@@ -40,7 +54,6 @@ void SPI4_IRQHandler(void){
 
 /*****
  * @brief This function is the global interrupt for DMA reception.
- *
  ****/
 
 void DMA2_Stream0_IRQHandler(void){
@@ -51,7 +64,6 @@ void DMA2_Stream0_IRQHandler(void){
 
 /*****
  * @brief This function is the global interrupt for DMA transmission.
- *
  ****/
 void DMA2_Stream1_IRQHandler(void){
 
@@ -157,8 +169,6 @@ int main(){
 	enableDMA2Transmit();
 	enableDMA2Receive();
 	enableSPI(Enable);
-
-	readData = SPI_reg->SPI_DR;
 
 	//DMA2Transfer();
 

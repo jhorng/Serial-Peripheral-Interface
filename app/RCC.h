@@ -50,7 +50,6 @@ struct Rcc_t{
 #define Rcc_reg	((Rcc*)RCC_BASE_ADDRESS)
 
 void gpioUnresetEnableClock(GPIO* port);
-void spi1UnresetEnableClock();
 void spi4UnresetEnableClock();
 void dmaUnresetEnableClock(int dma);
 
