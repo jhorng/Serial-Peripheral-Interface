@@ -98,13 +98,13 @@ void masterMode(){
 	configureFrameFormat(TI_Mode);
 	configureMode(Master_Mode);
 	configureDirection(UniDirec_2_Line);
-	//configureOutput(Transmit);
+	configureOutput(Transmit);
 	configureReceive(Full_Duplex);
-	//enableCRC(CRCenable);
+	enableCRC(CRCenable);
 	CRCpolynomial(0x11);
 	configureDataFrame(Bit8);
 	configureBR(BR4);
-	//interruptSPI(TXRXIE);
+	interruptSPI(TXRXIE);
 	DMArequest(DMA_TXRX);
 	configDMA2Transmit(txBuffer);	// memory to Peripheral
 	configDMA2Receive(rxBuffer);    // Peripheral to memory
@@ -119,7 +119,7 @@ void masterMode(){
 	 *	Pin 13 = SPI4_MISO
 	 *	Pin 14 = SPI4_MOSI
 	 ****/
-/*
+
 void slaveMode(){
 
 	configurePin(GPIO_MODE_ALTFUNC, PIN_11, PORTE);
@@ -140,17 +140,17 @@ void slaveMode(){
 	configureFrameFormat(TI_Mode);
 	configureMode(Slave_Mode);
 	configureDirection(UniDirec_2_Line);
-	//configureOutput(Transmit);
+	configureOutput(Transmit);
 	configureReceive(Full_Duplex);
-	//enableCRC(CRCenable);
+	enableCRC(CRCenable);
 	CRCpolynomial(0x11);
 	configureDataFrame(Bit8);
 	configureBR(BR4);
-	//interruptSPI(TXRXIE);
+	interruptSPI(TXRXIE);
 	DMArequest(DMA_RX);
-	//configDMA2Transmit(txBuffer);	// memory to Peripheral
+	configDMA2Transmit(txBuffer);	// memory to Peripheral
 	configDMA2Receive(rxBuffer);    // Peripheral to memory
-}*/
+}
 
 int main(){
 	uint32_t status1, status2, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
@@ -160,24 +160,23 @@ int main(){
 	uint32_t fpclk1 = HAL_RCC_GetPCLK1Freq();
 	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
 
-	//HAL_NVIC_EnableIRQ(SPI4_IRQn);
+	HAL_NVIC_EnableIRQ(SPI4_IRQn);
 	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 	masterMode();
-	//slaveMode();
+  slaveMode();
 	enableDMA2Transmit();
 	enableDMA2Receive();
 	enableSPI(Enable);
 
-	//DMA2Transfer();
+	DMA2Transfer();
 
 	while(1){
-		//sendData(0x69); // 8'b01101001
-		//readData = receivedData();
-		//configureCRCNext(Next_Transfer);
-		//crc = readCRC(Transmit);
-		//sendData(0xAF);
+		sendData(0x69); // 8'b01101001
+		readData = receivedData();
+		configureCRCNext(Next_Transfer);
+		crc = readCRC(Transmit);
 		status1 = SPI_reg->SPI_SR;
 	}
 }
