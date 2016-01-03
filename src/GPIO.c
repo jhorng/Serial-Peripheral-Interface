@@ -1,9 +1,9 @@
-/************************************************** 
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : GPIO.c
  *
- **************************************************/
+*/
 
 #include "GPIO.h"
 #include "RCC.h"

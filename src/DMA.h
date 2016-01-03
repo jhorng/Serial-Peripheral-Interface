@@ -1,9 +1,9 @@
-/************************************************** 
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : DMA.h
  *
- **************************************************/
+*/
 
 #ifndef __DMA_H__
 #define __DMA_H__

@@ -1,0 +1,393 @@
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : DMA.h
+ *
+ **************************************************/
+
+#ifndef __DMA_H__
+#define __DMA_H__
+
+#include "SPI.h"
+#include "RCC.h"
+#include <stdint.h>
+
+typedef enum{
+	PERIPHERAL_TO_MEMORY,
+	MEMORY_TO_PERIPHERAL,
+	MEMORY_TO_MEMORY
+}dataTransferDirection;
+
+typedef struct DMA_Type DMA_t;
+
+typedef struct{
+	  volatile uint32_t CR;
+	  volatile uint32_t NDTR;
+	  volatile uint32_t PAR;
+	  volatile uint32_t M0AR;
+	  volatile uint32_t M1AR;
+	  volatile uint32_t FCR;
+}Stream_t;
+
+struct DMA_Type{
+  volatile uint32_t LISR;
+  volatile uint32_t HISR;
+  volatile uint32_t LIFCR;
+  volatile uint32_t HIFCR;
+  Stream_t	S0;
+  Stream_t	S1;
+  Stream_t	S2;
+  Stream_t	S3;
+  Stream_t	S4;
+  Stream_t	S5;
+  Stream_t	S6;
+  Stream_t	S7;
+};
+
+#define DMA_ENABLE		1
+#define FIFO_DISABLE	0
+
+#define	ch0		0
+#define	ch1		1
+#define	ch2		2
+#define	ch3		3
+#define	ch4		4
+#define	ch5		5
+#define	ch6		6
+#define	ch7		7
+
+#define PRIORITY_LOW			(0 << 16)
+#define PRIORITY_MEDIUM			(1 << 16)
+#define PRIORITY_HIGH			(2 << 16)
+#define PRIORITY_VERY_HIGH		(3 << 16)
+
+#define MEMORY_BYTE_SIZE_DATA			(0 << 13)
+#define MEMORY_HALF_WORD_SIZE_DATA		(1 << 13)
+#define MEMORY_WORD_SIZE_DATA			(2 << 13)
+
+#define PERIPHERAL_BYTE_SIZE_DATA			(0 << 11)
+#define PERIPHERAL_HALF_WORD_SIZE_DATA		(1 << 11)
+#define PERIPHERAL_WORD_SIZE_DATA			(2 << 11)
+
+#define MEMORY_INCREMENT		(1 << 10)
+#define PERIPHERAL_INCEREMENT	(1 << 9)
+
+#define PERIPHERAL_MEMORY		0
+#define MEMORY_PERIPHERAL		1
+#define MEMORY_MEMORY			2
+
+#define DMA_FLOW_CONTROL		~(1 << 5)
+#define PERIPHERAL_FLOW_CONTROL	(1 << 5)
+
+#define CLEAR_ALL_INTERRUPT		~(15 << 1)
+#define ENABLE_ALL_INTERRUPT	(14 << 1)
+
+#define FLAG_TCIF1   11
+#define FLAG_HTIF1   10
+
+#define HalfTransfer		getDMA2Status(FLAG_HTIF1)
+#define CompleteTransfer	getDMA2Status(FLAG_TCIF1)
+
+#define DMA1   ((DMA_t*)0x40026000)
+#define DMA2   ((DMA_t*)0x40026400)
+
+void transferDirection(int direction);
+void configDMA2Transmit(uint32_t source);
+void configDMA2Receive(uint32_t source);
+void enableDMA2Transmit();
+void enableDMA2Receive();
+int getDMA2Status(int posBit);
+void clearFlag();
+
+#endif // __DMA_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : GPIO.h
+ *
+ **************************************************/
+
+#ifndef __GPIO_H__
+#define __GPIO_H__
+
+#include <stdint.h>
+
+#define GPIO_OUTPUT		GPIO_MODE_OUTPUT_PP
+#define GPIO_INPUT		GPIO_MODE_INPUT_PP
+
+typedef struct GPIO_t GPIO;
+struct GPIO_t{
+	uint32_t MODER;
+	uint32_t OTYPER;
+	uint32_t OSPEED;
+	uint32_t PUPDR;
+	uint32_t IDR;
+	uint32_t ODR;
+	uint32_t BSRR;
+	uint32_t LCKR;
+	uint32_t AFRL;
+	uint32_t AFRH;
+};
+
+#define PIN_0			0
+#define PIN_1			1
+#define PIN_2			2
+#define PIN_3			3
+#define PIN_4			4
+#define PIN_5			5
+#define PIN_6			6
+#define PIN_7			7
+#define PIN_8			8
+#define PIN_9			9
+#define PIN_10			10
+#define PIN_11			11
+#define PIN_12			12
+#define PIN_13			13
+#define PIN_14			14
+#define PIN_15			15
+
+#define GPIO_MODE_INPUT		0
+#define GPIO_MODE_OUTPUT	1
+#define GPIO_MODE_ALTFUNC	2
+#define GPIO_MODE_ANALOG	3
+
+#define GPIO_LOW_SPEED				0
+#define GPIO_MEDIUM_SPEED			1
+#define GPIO_HIGH_SPEED				2
+#define GPIO_VERY_HIGH_SPEED		3
+
+#define GPIO_NO_PULL				0
+#define GPIO_PULL_UP				1
+#define GPIO_PULL_DOWN				2
+#define GPIO_RESERVED				3
+
+#define GPIO_PUSH_PULL		0
+#define GPIO_OPEN_DRAIN		1
+
+#define AF0				0
+#define AF1				1
+#define AF2				2
+#define AF3				3
+#define AF4				4
+#define AF5				5
+#define AF6				6
+#define AF7				7
+#define AF8				8
+#define AF9				9
+#define AF10			10
+#define AF11			11
+#define AF12			12
+#define AF13			13
+#define AF14			14
+#define AF15			15
+
+#define GPIOA_BASE_ADDRESS	0x40020000
+#define GPIOB_BASE_ADDRESS	0x40020400
+#define GPIOC_BASE_ADDRESS	0x40020800
+#define GPIOD_BASE_ADDRESS	0x40020C00
+#define GPIOE_BASE_ADDRESS	0x40021000
+#define GPIOF_BASE_ADDRESS	0x40021400
+#define GPIOG_BASE_ADDRESS	0x40021800
+
+#define PORTA	((GPIO *)GPIOA_BASE_ADDRESS)
+#define PORTB	((GPIO *)GPIOB_BASE_ADDRESS)
+#define PORTC	((GPIO *)GPIOC_BASE_ADDRESS)
+#define PORTD	((GPIO *)GPIOD_BASE_ADDRESS)
+#define PORTE	((GPIO *)GPIOE_BASE_ADDRESS)
+#define PORTF	((GPIO *)GPIOF_BASE_ADDRESS)
+#define PORTG	((GPIO *)GPIOG_BASE_ADDRESS)
+
+void configurePin(int mode, int pinNum, GPIO *port);
+void altFunctionLow(int pinNum, GPIO *port, int AF);
+void altFunctionHigh(int pinNum, GPIO *port, int AF);
+
+#endif // __GPIO_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : RCC.h
+ *
+ **************************************************/
+
+#ifndef __RCC_H__
+#define __RCC_H__
+
+#include "GPIO.h"
+#include <stdint.h>
+
+typedef struct Rcc_t Rcc;
+struct Rcc_t{
+	volatile uint32_t RCC_CR;			// RCC clock control register (0x00)
+	volatile uint32_t RCC_PLLCFGR;		// RCC PLL configuration register (0x04)
+	volatile uint32_t RCC_CFGR;			// RCC clock configuration register (0x08)
+	volatile uint32_t RCC_CIR;			// RCC clock interrupt register	(0x0C)
+	volatile uint32_t RCC_AHB1RSTR;		// RCC AHB1 peripheral reset register (0x10)
+	volatile uint32_t RCC_AHB2RSTR;		// RCC AHB2 peripheral reset register
+	volatile uint32_t RCC_AHB3RSTR;		// RCC AHB3 peripheral reset register
+	volatile uint32_t reserved_0;
+	volatile uint32_t RCC_APB1RSTR;		// RCC APB1 peripheral reset register
+	volatile uint32_t RCC_APB2RSTR;		// RCC APB2 peripheral reset register
+	volatile uint32_t reserved_1;
+	volatile uint32_t reserved_2;
+	volatile uint32_t RCC_AHB1ENR;		// RCC AHB1 peripheral clock enable register
+	volatile uint32_t RCC_AHB2ENR;		// RCC AHB2 peripheral clock enable register
+	volatile uint32_t RCC_AHB3ENR;		// RCC AHB3 peripheral clock enable register
+	volatile uint32_t reserved_3;
+	volatile uint32_t RCC_APB1ENR;		// RCC APB1 peripheral clock enable register
+	volatile uint32_t RCC_APB2ENR;		// RCC APB2 peripheral clock enable register
+	volatile uint32_t reserved_4;
+	volatile uint32_t reserved_5;
+	volatile uint32_t RCC_AHB1LPENR;	// RCC AHB1 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_AHB2LPENR;	// RCC AHB2 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_AHB3LPENR;	// RCC AHB3 peripheral clock enable in low power mode register
+	volatile uint32_t reserved_6;
+	volatile uint32_t RCC_APB1LPENR;	// RCC APB1 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_APB2LPENR;	// RCC APB2 peripheral clock enable in low power mode register
+	volatile uint32_t reserved_7;
+	volatile uint32_t reserved_8;
+	volatile uint32_t RCC_BDCR;			// RCC Backup domain control register
+	volatile uint32_t RCC_CSR;			// RCC clock control & status register
+	volatile uint32_t reserved_9;
+	volatile uint32_t reserved_A;
+	volatile uint32_t RCC_SSCGR;		// RCC spread spectrum clock generation register
+	volatile uint32_t RCC_PLLI2SCFGR;	// RCC PLLI2S configuration register
+};
+
+#define dma1	0
+#define	dma2	1
+
+#define RCC_BASE_ADDRESS  0x40023800
+#define Rcc_reg	          ((Rcc*)RCC_BASE_ADDRESS)
+
+void gpioUnresetEnableClock(GPIO* port);
+void spi4UnresetEnableClock();
+void dmaUnresetEnableClock(int dma);
+
+#endif // __RCC_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : SPI.h
+ *
+ **************************************************/
+
+#ifndef __SPI_H__
+#define __SPI_H__
+
+#include <stdint.h>
+
+typedef struct SPI_t SPI;
+struct SPI_t{
+	volatile uint32_t SPI_CR1;
+	volatile uint32_t SPI_CR2;
+	volatile uint32_t SPI_SR;
+	volatile uint32_t SPI_DR;
+	volatile uint32_t SPI_CRCPR;
+	volatile uint32_t SPI_RXCRCR;
+	volatile uint32_t SPI_TXCRCR;
+	volatile uint32_t SPI_I2SCFGR;
+	volatile uint32_t SPI_I2SPR;
+};
+
+#define Disable					0
+#define Enable					1
+
+#define Receive					0
+#define Transmit				1
+
+#define UniDirec_2_Line			0
+#define BiDirec_1_Line			1
+
+#define Full_Duplex				0
+#define Output_Disable			1
+
+#define Slave_Mode				0
+#define Master_Mode				1
+
+#define Bit8					0	// DFF = 8-bits
+#define Bit16					1	// DFF = 16-bits
+
+#define Motorola_Mode			0
+#define TI_Mode					1
+
+#define MSB						0
+#define LSB						1
+
+#define Clock1					1
+#define Clock2					2
+#define Clock3					3
+#define Clock4					4
+
+#define CRCdisable				0
+#define CRCenable				1
+
+#define No_Phase				0
+#define Next_Transfer			1
+
+#define SSMdisable				0
+#define SSMenable				1
+
+#define SSOE_Disable			0
+#define SSOE_Enable				1
+
+#define rxDMA					0
+#define txDMA					1
+
+#define BR0          	 		0	// Fpclk/2
+#define BR1          			1	// Fpclk/4
+#define BR2         			2	// Fpclk/8
+#define BR3          			3	// Fpclk/16
+#define BR4         	  		4	// Fpclk/32
+#define BR5          			5	// Fpclk/64
+#define BR6           			6	// Fpclk/128
+#define BR7          		 	7	// Fpclk/256
+
+#define RXNEIE					1
+#define TXEIE					2
+#define TXRXIE					3
+
+#define DMA_RX					1
+#define DMA_TX					2
+#define DMA_TXRX				3
+
+#define FLAG_FRE				8
+#define FLAG_BSY				7
+#define FLAG_OVR				6
+#define FLAG_MODF				5
+#define FLAG_CRCERR				4
+#define FLAG_UDR				3
+#define FLAG_CHSIDE				2
+#define FLAG_TXE				1
+#define FLAG_RXNE				0
+
+#define readyTransmit    		getSPI4Status(FLAG_TXE)
+#define readyReceived    		getSPI4Status(FLAG_RXNE)
+#define isBusy					getSPI4Status(FLAG_BSY)
+
+#define SPI_BASE_ADDRESS  0x40013400
+#define SPI_reg					  ((SPI*)SPI_BASE_ADDRESS)
+
+int getSPI4Status(int posBit);
+void sendData(int Data);
+uint8_t receivedData(void);
+uint32_t readCRC(int path);
+void enableSPI(int SPE);
+void disableSPI(int SPE);
+void configureDirection(int direction);
+void configureOutput(int TX_RX);
+void configureMode(int mode);
+void configureDataFrame(int DFF);
+void configureFrameFormat(int FF);
+void configureLSBFIRST(int MSB_LSB);
+void configureClock(int clkSelect);
+void enableCRC(int en_CRC);
+void configureCRCNext(int phase);
+void enableSSM(int en_SSM);
+void configureBR(int baudRate);
+void configureSS(int SS);
+void CRCpolynomial(int polynomial);
+void DMAenable(int dma, int enable);
+void interruptSPI(int IE);
+void DMArequest(int DMA);
+
+#endif // __SPI_H__

@@ -1,10 +1,3 @@
-/************************************************** 
- *   Name : Chu Jaan Horng
- *   Title: Serial Interface Peripheral
- *   File : SPI.h
- *
- **************************************************/
-
 #ifndef __SPI_H__
 #define __SPI_H__
 
@@ -98,8 +91,7 @@ struct SPI_t{
 #define readyReceived    		getSPI4Status(FLAG_RXNE)
 #define isBusy					getSPI4Status(FLAG_BSY)
 
-#define SPI_BASE_ADDRESS  0x40013400
-#define SPI_reg					  ((SPI*)SPI_BASE_ADDRESS)
+#define SPI_reg					((SPI*)0x40013400)
 
 int getSPI4Status(int posBit);
 void sendData(int Data);

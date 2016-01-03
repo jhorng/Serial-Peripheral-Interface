@@ -1,0 +1,1095 @@
+/**************************************************
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : DMA.c
+ *
+ **************************************************/
+
+#include "DMA.h"
+#include "RCC.h"
+#include "SPI.h"
+#include <stdint.h>
+
+/****
+ *  @brief transferDirection() is used to determine the transfer direction of DMA.
+ *         returnDirection1 & returnDirection2 - to read back the value in the reigster.
+ *  @arg   direction
+ ****/
+void transferDirection(int direction){
+	uint32_t returnDirection1, returnDirection2;
+	dataTransferDirection TransDirec;
+
+	TransDirec = direction;
+	switch(TransDirec){
+	case PERIPHERAL_TO_MEMORY:
+		DMA2->S0.CR &= ~(3 << 6);
+		break;
+	case MEMORY_TO_PERIPHERAL:
+		DMA2->S1.CR &= ~(3 << 6);
+		DMA2->S1.CR |= (1 << 6);
+		break;
+	case MEMORY_TO_MEMORY:
+		break;
+	default: break;
+	}
+
+	returnDirection1 = DMA2->S1.CR;
+	returnDirection2 = DMA2->S0.CR;
+}
+
+/****
+ *  @brief configDMA2Transmit() is the configuration function for DMA transmission.
+ *         argument source is used to assign the DMA source or destination.
+ *         returnDMATransmit, returnPeriAddr1 & returnMemAddr1  - to read back the value in the reigster.
+ *         returnFlagIE1  - to read back the value in the reigster.
+ *  @arg   source
+ ****/
+void configDMA2Transmit(uint32_t source){
+	uint32_t returnDMATransmit, returnPeriAddr1, returnMemAddr1, returnFlagIE1;
+
+	DMA2->S1.CR &= ~1; //Disable DMA
+
+	DMA2->S1.CR &= ~(7 << 25);	 	// Clear bits Channel selection
+	DMA2->S1.CR |= (ch4 << 25);		// Set Channel selection to channel 4
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= ~(1 << 19);		// Clear CT to target memory 0
+	DMA2->S1.CR &= ~(1 << 18);		// Clear double buffer mode
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= ~(3 << 16);		// Clear priority
+	DMA2->S1.CR |= PRIORITY_HIGH;	// Set priority to high
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= ~(3 << 13);					// Clear memory data size
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= ~(3 << 11);					// Clear peripheral data size
+	returnDMATransmit = DMA2->S1.CR;
+  
+	transferDirection(MEMORY_PERIPHERAL);
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
+	DMA2->S1.CR |= MEMORY_INCREMENT;
+
+	DMA2->S1.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.CR &= CLEAR_ALL_INTERRUPT;
+	DMA2->S1.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	returnDMATransmit = DMA2->S1.CR;
+
+	DMA2->S1.NDTR = 1;  // Data size 
+
+	DMA2->S1.M0AR = (uint32_t)source;				 // Source
+	DMA2->S1.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Destination
+
+	DMA2->S1.FCR  &= ~FIFO_DISABLE;
+
+	returnDMATransmit = DMA2->S1.CR;
+	returnPeriAddr1 = DMA2->S1.PAR;
+	returnMemAddr1 = DMA2->S1.M0AR;
+	returnFlagIE1 = DMA2->LISR;
+}
+
+/****
+ *  @brief configDMA2Receive() is the configuration function for DMA reception.
+ *         argument source is used to assign the DMA source or destination.
+ *         returnDMAReceive, returnPeriAddr2 & returnMemAddr2  - to read back the value in the reigster.
+ *         returnFlagIE2  - to read back the value in the reigster.
+ *  @arg   source
+ ****/
+void configDMA2Receive(uint32_t source){
+	uint32_t returnDMAReceive, returnPeriAddr2, returnMemAddr2, returnFlagIE2;
+
+	DMA2->S0.CR &= ~1; //Disable DMA
+
+	DMA2->S0.CR &= ~(7 << 25);	 	// Clear bits Channel selection
+	DMA2->S0.CR |= (ch4 << 25);		// Set Channel selection to channel 4
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(1 << 19);		// Clear CT to target memory 0
+	DMA2->S0.CR &= ~(1 << 18);		// Clear double buffer mode
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 16);		// Clear priority
+	DMA2->S0.CR |= PRIORITY_HIGH;	// Set priority to high
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 13);					// Clear memory data size
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~(3 << 11);					// Clear peripheral data size
+	returnDMAReceive = DMA2->S0.CR;
+
+	transferDirection(PERIPHERAL_MEMORY);
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= ~MEMORY_INCREMENT;			// Clear memory increment
+	DMA2->S0.CR |= MEMORY_INCREMENT;
+
+	DMA2->S0.CR &= ~PERIPHERAL_INCEREMENT;		// Clear peripheral increment
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= DMA_FLOW_CONTROL;				// Clear flow controller
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.CR &= CLEAR_ALL_INTERRUPT;
+	DMA2->S0.CR |= ENABLE_ALL_INTERRUPT;		// Enable all interrupt except DMEIE
+	returnDMAReceive = DMA2->S0.CR;
+
+	DMA2->S0.NDTR = 1;  // data size
+
+	DMA2->S0.PAR  = (uint32_t)(&(SPI_reg->SPI_DR));  // Source
+	DMA2->S0.M0AR = (uint32_t)source;				 // Destination
+
+	DMA2->S0.FCR  &= ~FIFO_DISABLE;
+
+	returnDMAReceive = DMA2->S0.CR;
+	returnMemAddr2 = DMA2->S0.PAR;
+	returnPeriAddr2 = DMA2->S0.M0AR;
+	returnFlagIE2 = DMA2->LISR;
+}
+
+/****
+ *  @brief  To enable DMA2 for transmision.
+ *          returnDMA2  - to read back the value in the reigster.
+ ****/
+void enableDMA2Transmit(){
+	uint32_t returnDMA2;
+	DMA2->S1.CR |= 1;
+
+	returnDMA2 = DMA2->S1.CR;
+}
+
+/****
+ *  @brief  To enable DMA2 for reception.
+ *          returnDMA2  - to read back the value in the reigster.
+ ****/
+void enableDMA2Receive(){
+	uint32_t returnDMA2;
+	DMA2->S0.CR |= 1;
+
+	returnDMA2 = DMA2->S0.CR;
+}
+
+/****
+ *  @brief  To get the status flag DMA2.
+ *  @arg    posBit
+ *  @retval the wanted bit in LISR.
+ ****/
+int getDMA2Status(int posBit){
+  uint32_t checkSR = DMA2->LISR;
+  return ((DMA2->LISR  >> posBit) & 1 );
+}
+
+/****
+ *  @brief  To clear the status flag by setting the bits clear register.
+ *          returnFLag  - to read back the value in the reigster.
+ ****/
+void clearFlag(){
+	uint32_t returnFLag;
+	DMA2->LIFCR |= (15 << 8);
+	DMA2->LIFCR |= (1 << 6);
+
+	returnFLag = DMA2->LISR;
+}
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : GPIO.c
+ *
+ **************************************************/
+
+#include "GPIO.h"
+#include "RCC.h"
+
+/****
+ * @brief To configure the GPIO pins.
+ *        The clock activation is included in this function.
+ *        This is to ensure the clock is activated whenever this function is called.
+ * @arg   mode, pinNum, *port
+ ****/
+void configurePin(int mode, int pinNum, GPIO *port){
+
+	gpioUnresetEnableClock(port);
+
+	port->MODER &= ~(3 << (pinNum * 2));
+	port->MODER |= (mode << (pinNum * 2));
+	port->OSPEED &= ~(3 << (pinNum * 2));
+	port->OSPEED |= (GPIO_HIGH_SPEED << (pinNum * 2));
+}
+
+/****
+ * @brief To configure the GPIO pins.
+ *        This function is used whenever alternate function mode is used.
+ *        altFunctionLow() is used for pin number =< 7.
+ *        returnAFL - to read back the value in the reigster.
+ * @arg   pinNum, *port, AF
+ ****/
+void altFunctionLow(int pinNum, GPIO *port, int AF){
+	uint32_t returnAFL;
+	port->AFRL &= ~(16 << (pinNum * 4));
+	port->AFRL |= AF << (pinNum * 4);
+	returnAFL = port->AFRL;
+}
+
+/****
+ * @brief To configure the GPIO pins.
+ *        This function is used whenever alternate function mode is used.
+ *        altFunctionHigh() is used for pin number > 7.
+ *        returnAFL - to read back the value in the reigster.
+ * @arg   pinNum, *port, AF
+ ****/
+void altFunctionHigh(int pinNum, GPIO *port, int AF){
+	uint32_t returnAFH;
+	port->AFRH &= ~(16 << ((pinNum - 8) * 4));
+	port->AFRH |= (AF << ((pinNum - 8) * 4));
+	returnAFH = port->AFRH;
+}
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : RCC.c
+ *
+ **************************************************/
+
+#include "GPIO.h"
+#include "RCC.h"
+
+/****
+ * @brief Unreset the clock and enable the clock of GPIO.
+ *        This is the function to assert the peripheral clock.
+ *        returnGPIOReset & returnGPIOClock - to read back the value in the reigster.
+ * @arg   port
+ ****/
+void gpioUnresetEnableClock(GPIO* port){
+	uint32_t returnGPIOReset, returnGPIOClock;
+
+	int valShift = ((int)port - (0x40020000))/(0x400);
+	Rcc_reg->RCC_AHB1RSTR &= ~(1 << (valShift));
+	Rcc_reg->RCC_AHB1ENR |= (0x00100000 | (1 << (valShift)));
+
+	returnGPIOReset = Rcc_reg->RCC_AHB1RSTR;
+	returnGPIOClock = Rcc_reg->RCC_AHB1ENR;
+}
+
+/****
+ * @brief Unreset the clock and enable the clock of SPI4.
+ *        This is the function to assert the peripheral clock.
+ *        returnReset4 & returnClk4 - to read back the value in the reigster.
+ ****/
+void spi4UnresetEnableClock(){
+	uint32_t returnReset4, returnClk4;
+	Rcc_reg->RCC_APB2RSTR &= ~(1 << 13);
+	Rcc_reg->RCC_APB2ENR |= (1 << 13);
+
+	returnReset4 = Rcc_reg->RCC_APB2RSTR;
+	returnClk4 = Rcc_reg->RCC_APB2ENR;
+}
+
+/****
+ * @brief Unreset the clock and enable the clock of DMA2.
+ *        This is the function to assert the peripheral clock.
+ *        returnDMAReset & returnDMAClock - to read back the value in the reigster.
+ * @arg   dma
+ ****/
+void dmaUnresetEnableClock(int dma){
+	uint32_t returnDMAReset, returnDMAClock;
+	if (dma){
+		Rcc_reg->RCC_AHB1RSTR &= ~(1 << 22);
+		Rcc_reg->RCC_AHB1ENR |= (1 << 22);
+	}
+	else{
+		Rcc_reg->RCC_AHB1RSTR &= ~(1 << 21);
+		Rcc_reg->RCC_AHB1ENR |= (1 << 21);
+	}
+
+	returnDMAReset = Rcc_reg->RCC_AHB1RSTR;
+	returnDMAClock = Rcc_reg->RCC_AHB1ENR;
+}
+
+/* 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : SPI.c
+ *
+*/
+
+#include "SPI.h"
+#include "RCC.h"
+
+void sendData(int Data){
+	while(!readyTransmit);
+	SPI_reg->SPI_DR = Data;
+}
+
+uint8_t receivedData(void){
+   uint32_t checkSR = SPI_reg->SPI_SR;
+   while(!readyReceived);
+   uint32_t checkDR = SPI_reg->SPI_DR;
+   return SPI_reg->SPI_DR;
+}
+
+uint32_t readCRC(int path){
+	uint16_t checkCRC;
+	uint32_t checkSR = SPI_reg->SPI_SR;
+	while(isBusy);
+	if (path){
+		checkCRC = SPI_reg->SPI_TXCRCR;
+	}
+	else {
+		checkCRC = SPI_reg->SPI_RXCRCR;
+	}
+
+	return checkCRC;
+}
+
+int getSPI4Status(int posBit){
+  uint32_t checkSR = SPI_reg->SPI_SR;
+  return ((SPI_reg->SPI_SR  >> posBit) & 1 );
+}
+
+void enableSPI(int SPE){
+	uint32_t returnEnSPI;
+	SPI_reg->SPI_CR1 &= ~(1 << 6);
+	SPI_reg->SPI_CR1 |= SPE << 6;
+
+	returnEnSPI = SPI_reg->SPI_CR1;
+}
+
+void disableSPI(int SPE){
+	uint32_t returnDisSPI, statusReg;
+	statusReg = SPI_reg->SPI_SR;
+	while( !(((SPI_reg->SPI_SR) >> FLAG_TXE) & 1) );
+	while( (((SPI_reg->SPI_SR) >> FLAG_BSY) & 1) );
+	SPI_reg->SPI_CR1 &= ~(1 << 6);
+	SPI_reg->SPI_CR1 |= SPE << 6;
+
+	returnDisSPI = SPI_reg->SPI_CR1;
+}
+
+void configureDirection(int direction){
+	uint32_t returnDirection;
+	SPI_reg->SPI_CR1 &= ~(1 << 15);
+	SPI_reg->SPI_CR1 |= (direction << 15);
+
+	returnDirection = SPI_reg->SPI_CR1;
+}
+
+void configureOutput(int TX_RX){
+	uint32_t returnOutput;
+	SPI_reg->SPI_CR1 &= ~(1 << 14);
+	SPI_reg->SPI_CR1 |= (TX_RX << 14);
+
+	returnOutput = SPI_reg->SPI_CR1;
+}
+
+void configureReceive(int RX_ONLY){
+	uint32_t returnReceive;
+	SPI_reg->SPI_CR1 &= ~(1 << 10);
+	SPI_reg->SPI_CR1 |= (RX_ONLY << 10);
+
+	returnReceive = SPI_reg->SPI_CR1;
+}
+
+void configureMode(int mode){
+	uint32_t returnMode;
+	SPI_reg->SPI_CR1 &= ~(1 << 2);
+	SPI_reg->SPI_CR1 |= (mode << 2);
+
+	returnMode = SPI_reg->SPI_CR1;
+}
+
+void configureDataFrame(int DFF){
+	uint32_t returnDFF;
+	SPI_reg->SPI_CR1 &= ~(1 << 11);
+	SPI_reg->SPI_CR1 |= (DFF << 11);
+
+	returnDFF = SPI_reg->SPI_CR1;
+}
+
+void configureFrameFormat(int FF){
+	uint32_t returnFF;
+	SPI_reg->SPI_CR2 &= ~(1 << 4);
+	SPI_reg->SPI_CR2 |= (FF << 4);
+
+	returnFF = SPI_reg->SPI_CR2;
+}
+
+void configureLSBFIRST(int MSB_LSB){
+	uint32_t returnLSBFIRST;
+	SPI_reg->SPI_CR1 &= ~(1 << 7);
+	SPI_reg->SPI_CR1 |= (MSB_LSB << 7);
+
+	returnLSBFIRST = SPI_reg->SPI_CR1;
+}
+
+void configureClock(int clkSelect){
+	uint32_t returnClock;
+	switch (clkSelect){
+	case Clock1:
+		SPI_reg->SPI_CR1 &= ~(1 << 1);
+		SPI_reg->SPI_CR1 &= ~1;
+		break;
+	case Clock2:
+		SPI_reg->SPI_CR1 &= ~(1 << 1);
+		SPI_reg->SPI_CR1 |= 1;
+		break;
+	case Clock3:
+		SPI_reg->SPI_CR1 |= (1 << 1);
+		SPI_reg->SPI_CR1 &= ~1;
+		break;
+	case Clock4:
+		SPI_reg->SPI_CR1 |= (1 << 1);
+		SPI_reg->SPI_CR1 |= 1;
+		break;
+	default:
+		SPI_reg->SPI_CR1 &= ~(1 << 1);
+		SPI_reg->SPI_CR1 &= ~1;
+	}
+
+	returnClock = SPI_reg->SPI_CR1;
+}
+
+void enableCRC(int en_CRC){
+	uint32_t returnCRC;
+	SPI_reg->SPI_CR1 &= ~(1 << 13);
+	SPI_reg->SPI_CR1 |= (en_CRC << 13);
+
+	returnCRC = SPI_reg->SPI_CR1;
+}
+
+void configureCRCNext(int phase){
+	uint32_t returnPhase;
+	SPI_reg->SPI_CR1 &= ~(1 << 12);
+	SPI_reg->SPI_CR1 |= (phase << 12);
+
+	returnPhase = SPI_reg->SPI_CR1;
+}
+
+void enableSSM(int en_SSM){
+	uint32_t returnSSM;
+	SPI_reg->SPI_CR1 &= ~(1 << 9);
+	SPI_reg->SPI_CR1 |= (en_SSM << 9);
+
+	returnSSM = SPI_reg->SPI_CR1;
+}
+
+void configureBR(int baudRate){
+	uint32_t returnBR;
+	SPI_reg->SPI_CR1 &= ~(7 << 3);
+	SPI_reg->SPI_CR1 |= (baudRate << 3);
+
+	returnBR = SPI_reg->SPI_CR1;
+}
+
+void configureSS(int SS){
+	uint32_t returnSS;
+	SPI_reg->SPI_CR2 &= ~(1 << 2);
+	SPI_reg->SPI_CR2 |= (SS << 2);
+
+	returnSS = SPI_reg->SPI_CR2;
+}
+
+void CRCpolynomial(int polynomial){
+	uint32_t returnPolynomial;
+	SPI_reg->SPI_CRCPR = polynomial;
+
+	returnPolynomial = SPI_reg->SPI_CRCPR;
+}
+
+void interruptSPI(int IE){
+	uint32_t returnInterrupt;
+	SPI_reg->SPI_CR2 &= ~(3 << 6);
+	SPI_reg->SPI_CR2 |= (IE << 6);
+
+	returnInterrupt = SPI_reg->SPI_CR2;
+}
+
+void DMArequest(int DMA){
+	uint32_t returnDMA;
+	SPI_reg->SPI_CR2 &= ~(3);
+	SPI_reg->SPI_CR2 |= (DMA);
+
+	returnDMA = SPI_reg->SPI_CR2;
+}
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : Main.c
+ **************************************************/
+
+#include "stm32f4xx.h"
+#include "SPI.h"
+#include "RCC.h"
+#include "GPIO.h"
+#include "DMA.h"
+#include <stdint.h>
+
+uint8_t txBuffer[] = "A";
+uint8_t rxBuffer[100];
+
+void delay(uint32_t delayCount){
+	while(delayCount != 0){
+		delayCount--;
+	}
+}
+
+/****
+ * @brief To check the status flag for half transfer and complete transfer.
+ *        This function will keep on polling until the data is completely sent.
+ ****/
+void DMA2Transfer(){
+	int statusSPI, statusDMA;
+
+	statusSPI = SPI_reg->SPI_SR;
+	statusDMA = DMA2->LISR;
+
+	while(! (HalfTransfer & CompleteTransfer));
+	clearFlag();
+	statusDMA = DMA2->LISR;
+}
+
+/*****
+ * @brief This function is the global interrupt for SPI transmission & reception.
+ *        Once interrupt is generated, data will be either write/sent or read/received.
+ ****/
+void SPI4_IRQHandler(void){
+	int status, readData;
+
+	status = SPI_reg->SPI_SR;
+	if (readyReceived){
+		readData = receivedData();
+	}
+	else if (readyTransmit){
+		sendData(0x69); // 8'b01101001
+	}
+}
+
+
+/*****
+ * @brief This function is the global interrupt for DMA reception.
+ ****/
+
+void DMA2_Stream0_IRQHandler(void){
+	int readData;
+
+	readData = rxBuffer[0];
+}
+
+/*****
+ * @brief This function is the global interrupt for DMA transmission.
+ ****/
+void DMA2_Stream1_IRQHandler(void){
+
+	DMA2Transfer();
+}
+
+	/****
+	 *	Port -> PORTE
+	 *
+	 *	Pin 2 = SPI4_SCK
+	 *	Pin 4 = SPI4_NSS
+	 *	Pin 5 = SPI4_MISO
+	 *	Pin 6 = SPI4_MOSI
+	 ****/
+
+void masterMode(){
+	configurePin(GPIO_MODE_ALTFUNC, PIN_2, PORTE);
+	altFunctionLow(PIN_2, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_4, PORTE);
+	altFunctionLow(PIN_4, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_5, PORTE);
+	altFunctionLow(PIN_5, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_6, PORTE);
+	altFunctionLow(PIN_6, PORTE, AF5);
+
+	spi4UnresetEnableClock();
+	dmaUnresetEnableClock(dma2);
+
+	configureFrameFormat(TI_Mode);
+	configureMode(Master_Mode);
+	configureDirection(UniDirec_2_Line);
+	configureOutput(Transmit);
+	configureReceive(Full_Duplex);
+	enableCRC(CRCenable);
+	CRCpolynomial(0x11);
+	configureDataFrame(Bit8);
+	configureBR(BR4);
+	interruptSPI(TXRXIE);
+	DMArequest(DMA_TXRX);
+	configDMA2Transmit(txBuffer);	// memory to Peripheral
+	configDMA2Receive(rxBuffer);    // Peripheral to memory
+}
+
+
+/****
+	 *	Port -> PORTE
+	 *
+	 *	Pin 11 = SPI4_NSS
+	 *	Pin 12 = SPI4_SCK
+	 *	Pin 13 = SPI4_MISO
+	 *	Pin 14 = SPI4_MOSI
+	 ****/
+
+void slaveMode(){
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_11, PORTE);
+	altFunctionHigh(PIN_11, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_12, PORTE);
+	altFunctionHigh(PIN_12, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_13, PORTE);
+	altFunctionHigh(PIN_13, PORTE, AF5);
+
+	configurePin(GPIO_MODE_ALTFUNC, PIN_14, PORTE);
+	altFunctionHigh(PIN_14, PORTE, AF5);
+
+	spi4UnresetEnableClock();
+	dmaUnresetEnableClock(dma2);
+
+	configureFrameFormat(TI_Mode);
+	configureMode(Slave_Mode);
+	configureDirection(UniDirec_2_Line);
+	configureOutput(Transmit);
+	configureReceive(Full_Duplex);
+	enableCRC(CRCenable);
+	CRCpolynomial(0x11);
+	configureDataFrame(Bit8);
+	configureBR(BR4);
+	interruptSPI(TXRXIE);
+	DMArequest(DMA_RX);
+	configDMA2Transmit(txBuffer);	// memory to Peripheral
+	configDMA2Receive(rxBuffer);    // Peripheral to memory
+}
+
+int main(){
+	uint32_t status1, status2, writeData, readData, AF_PIN_2, AF_PIN_6, tx, crc;
+
+	uint32_t fsclk = HAL_RCC_GetClockConfig();
+	uint32_t fhclk = HAL_RCC_GetHCLKFreq();
+	uint32_t fpclk1 = HAL_RCC_GetPCLK1Freq();
+	uint32_t fpclk2 = HAL_RCC_GetPCLK2Freq();
+
+	HAL_NVIC_EnableIRQ(SPI4_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+
+	masterMode();
+  slaveMode();
+	enableDMA2Transmit();
+	enableDMA2Receive();
+	enableSPI(Enable);
+
+	DMA2Transfer();
+
+	while(1){
+		sendData(0x69); // 8'b01101001
+		readData = receivedData();
+		configureCRCNext(Next_Transfer);
+		crc = readCRC(Transmit);
+		status1 = SPI_reg->SPI_SR;
+	}
+}
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : DMA.h
+ *
+ **************************************************/
+
+#ifndef __DMA_H__
+#define __DMA_H__
+
+#include "SPI.h"
+#include "RCC.h"
+#include <stdint.h>
+
+typedef enum{
+	PERIPHERAL_TO_MEMORY,
+	MEMORY_TO_PERIPHERAL,
+	MEMORY_TO_MEMORY
+}dataTransferDirection;
+
+typedef struct DMA_Type DMA_t;
+
+typedef struct{
+	  volatile uint32_t CR;
+	  volatile uint32_t NDTR;
+	  volatile uint32_t PAR;
+	  volatile uint32_t M0AR;
+	  volatile uint32_t M1AR;
+	  volatile uint32_t FCR;
+}Stream_t;
+
+struct DMA_Type{
+  volatile uint32_t LISR;
+  volatile uint32_t HISR;
+  volatile uint32_t LIFCR;
+  volatile uint32_t HIFCR;
+  Stream_t	S0;
+  Stream_t	S1;
+  Stream_t	S2;
+  Stream_t	S3;
+  Stream_t	S4;
+  Stream_t	S5;
+  Stream_t	S6;
+  Stream_t	S7;
+};
+
+#define DMA_ENABLE		1
+#define FIFO_DISABLE	0
+
+#define	ch0		0
+#define	ch1		1
+#define	ch2		2
+#define	ch3		3
+#define	ch4		4
+#define	ch5		5
+#define	ch6		6
+#define	ch7		7
+
+#define PRIORITY_LOW			(0 << 16)
+#define PRIORITY_MEDIUM			(1 << 16)
+#define PRIORITY_HIGH			(2 << 16)
+#define PRIORITY_VERY_HIGH		(3 << 16)
+
+#define MEMORY_BYTE_SIZE_DATA			(0 << 13)
+#define MEMORY_HALF_WORD_SIZE_DATA		(1 << 13)
+#define MEMORY_WORD_SIZE_DATA			(2 << 13)
+
+#define PERIPHERAL_BYTE_SIZE_DATA			(0 << 11)
+#define PERIPHERAL_HALF_WORD_SIZE_DATA		(1 << 11)
+#define PERIPHERAL_WORD_SIZE_DATA			(2 << 11)
+
+#define MEMORY_INCREMENT		(1 << 10)
+#define PERIPHERAL_INCEREMENT	(1 << 9)
+
+#define PERIPHERAL_MEMORY		0
+#define MEMORY_PERIPHERAL		1
+#define MEMORY_MEMORY			2
+
+#define DMA_FLOW_CONTROL		~(1 << 5)
+#define PERIPHERAL_FLOW_CONTROL	(1 << 5)
+
+#define CLEAR_ALL_INTERRUPT		~(15 << 1)
+#define ENABLE_ALL_INTERRUPT	(14 << 1)
+
+#define FLAG_TCIF1   11
+#define FLAG_HTIF1   10
+
+#define HalfTransfer		getDMA2Status(FLAG_HTIF1)
+#define CompleteTransfer	getDMA2Status(FLAG_TCIF1)
+
+#define DMA1   ((DMA_t*)0x40026000)
+#define DMA2   ((DMA_t*)0x40026400)
+
+void transferDirection(int direction);
+void configDMA2Transmit(uint32_t source);
+void configDMA2Receive(uint32_t source);
+void enableDMA2Transmit();
+void enableDMA2Receive();
+int getDMA2Status(int posBit);
+void clearFlag();
+
+#endif // __DMA_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : GPIO.h
+ *
+ **************************************************/
+
+#ifndef __GPIO_H__
+#define __GPIO_H__
+
+#include <stdint.h>
+
+#define GPIO_OUTPUT		GPIO_MODE_OUTPUT_PP
+#define GPIO_INPUT		GPIO_MODE_INPUT_PP
+
+typedef struct GPIO_t GPIO;
+struct GPIO_t{
+	uint32_t MODER;
+	uint32_t OTYPER;
+	uint32_t OSPEED;
+	uint32_t PUPDR;
+	uint32_t IDR;
+	uint32_t ODR;
+	uint32_t BSRR;
+	uint32_t LCKR;
+	uint32_t AFRL;
+	uint32_t AFRH;
+};
+
+#define PIN_0			0
+#define PIN_1			1
+#define PIN_2			2
+#define PIN_3			3
+#define PIN_4			4
+#define PIN_5			5
+#define PIN_6			6
+#define PIN_7			7
+#define PIN_8			8
+#define PIN_9			9
+#define PIN_10			10
+#define PIN_11			11
+#define PIN_12			12
+#define PIN_13			13
+#define PIN_14			14
+#define PIN_15			15
+
+#define GPIO_MODE_INPUT		0
+#define GPIO_MODE_OUTPUT	1
+#define GPIO_MODE_ALTFUNC	2
+#define GPIO_MODE_ANALOG	3
+
+#define GPIO_LOW_SPEED				0
+#define GPIO_MEDIUM_SPEED			1
+#define GPIO_HIGH_SPEED				2
+#define GPIO_VERY_HIGH_SPEED		3
+
+#define GPIO_NO_PULL				0
+#define GPIO_PULL_UP				1
+#define GPIO_PULL_DOWN				2
+#define GPIO_RESERVED				3
+
+#define GPIO_PUSH_PULL		0
+#define GPIO_OPEN_DRAIN		1
+
+#define AF0				0
+#define AF1				1
+#define AF2				2
+#define AF3				3
+#define AF4				4
+#define AF5				5
+#define AF6				6
+#define AF7				7
+#define AF8				8
+#define AF9				9
+#define AF10			10
+#define AF11			11
+#define AF12			12
+#define AF13			13
+#define AF14			14
+#define AF15			15
+
+#define GPIOA_BASE_ADDRESS	0x40020000
+#define GPIOB_BASE_ADDRESS	0x40020400
+#define GPIOC_BASE_ADDRESS	0x40020800
+#define GPIOD_BASE_ADDRESS	0x40020C00
+#define GPIOE_BASE_ADDRESS	0x40021000
+#define GPIOF_BASE_ADDRESS	0x40021400
+#define GPIOG_BASE_ADDRESS	0x40021800
+
+#define PORTA	((GPIO *)GPIOA_BASE_ADDRESS)
+#define PORTB	((GPIO *)GPIOB_BASE_ADDRESS)
+#define PORTC	((GPIO *)GPIOC_BASE_ADDRESS)
+#define PORTD	((GPIO *)GPIOD_BASE_ADDRESS)
+#define PORTE	((GPIO *)GPIOE_BASE_ADDRESS)
+#define PORTF	((GPIO *)GPIOF_BASE_ADDRESS)
+#define PORTG	((GPIO *)GPIOG_BASE_ADDRESS)
+
+void configurePin(int mode, int pinNum, GPIO *port);
+void altFunctionLow(int pinNum, GPIO *port, int AF);
+void altFunctionHigh(int pinNum, GPIO *port, int AF);
+
+#endif // __GPIO_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : RCC.h
+ *
+ **************************************************/
+
+#ifndef __RCC_H__
+#define __RCC_H__
+
+#include "GPIO.h"
+#include <stdint.h>
+
+typedef struct Rcc_t Rcc;
+struct Rcc_t{
+	volatile uint32_t RCC_CR;			// RCC clock control register (0x00)
+	volatile uint32_t RCC_PLLCFGR;		// RCC PLL configuration register (0x04)
+	volatile uint32_t RCC_CFGR;			// RCC clock configuration register (0x08)
+	volatile uint32_t RCC_CIR;			// RCC clock interrupt register	(0x0C)
+	volatile uint32_t RCC_AHB1RSTR;		// RCC AHB1 peripheral reset register (0x10)
+	volatile uint32_t RCC_AHB2RSTR;		// RCC AHB2 peripheral reset register
+	volatile uint32_t RCC_AHB3RSTR;		// RCC AHB3 peripheral reset register
+	volatile uint32_t reserved_0;
+	volatile uint32_t RCC_APB1RSTR;		// RCC APB1 peripheral reset register
+	volatile uint32_t RCC_APB2RSTR;		// RCC APB2 peripheral reset register
+	volatile uint32_t reserved_1;
+	volatile uint32_t reserved_2;
+	volatile uint32_t RCC_AHB1ENR;		// RCC AHB1 peripheral clock enable register
+	volatile uint32_t RCC_AHB2ENR;		// RCC AHB2 peripheral clock enable register
+	volatile uint32_t RCC_AHB3ENR;		// RCC AHB3 peripheral clock enable register
+	volatile uint32_t reserved_3;
+	volatile uint32_t RCC_APB1ENR;		// RCC APB1 peripheral clock enable register
+	volatile uint32_t RCC_APB2ENR;		// RCC APB2 peripheral clock enable register
+	volatile uint32_t reserved_4;
+	volatile uint32_t reserved_5;
+	volatile uint32_t RCC_AHB1LPENR;	// RCC AHB1 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_AHB2LPENR;	// RCC AHB2 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_AHB3LPENR;	// RCC AHB3 peripheral clock enable in low power mode register
+	volatile uint32_t reserved_6;
+	volatile uint32_t RCC_APB1LPENR;	// RCC APB1 peripheral clock enable in low power mode register
+	volatile uint32_t RCC_APB2LPENR;	// RCC APB2 peripheral clock enable in low power mode register
+	volatile uint32_t reserved_7;
+	volatile uint32_t reserved_8;
+	volatile uint32_t RCC_BDCR;			// RCC Backup domain control register
+	volatile uint32_t RCC_CSR;			// RCC clock control & status register
+	volatile uint32_t reserved_9;
+	volatile uint32_t reserved_A;
+	volatile uint32_t RCC_SSCGR;		// RCC spread spectrum clock generation register
+	volatile uint32_t RCC_PLLI2SCFGR;	// RCC PLLI2S configuration register
+};
+
+#define dma1	0
+#define	dma2	1
+
+#define RCC_BASE_ADDRESS  0x40023800
+#define Rcc_reg	          ((Rcc*)RCC_BASE_ADDRESS)
+
+void gpioUnresetEnableClock(GPIO* port);
+void spi4UnresetEnableClock();
+void dmaUnresetEnableClock(int dma);
+
+#endif // __RCC_H__
+/************************************************** 
+ *   Name : Chu Jaan Horng
+ *   Title: Serial Interface Peripheral
+ *   File : SPI.h
+ *
+ **************************************************/
+
+#ifndef __SPI_H__
+#define __SPI_H__
+
+#include <stdint.h>
+
+typedef struct SPI_t SPI;
+struct SPI_t{
+	volatile uint32_t SPI_CR1;
+	volatile uint32_t SPI_CR2;
+	volatile uint32_t SPI_SR;
+	volatile uint32_t SPI_DR;
+	volatile uint32_t SPI_CRCPR;
+	volatile uint32_t SPI_RXCRCR;
+	volatile uint32_t SPI_TXCRCR;
+	volatile uint32_t SPI_I2SCFGR;
+	volatile uint32_t SPI_I2SPR;
+};
+
+#define Disable					0
+#define Enable					1
+
+#define Receive					0
+#define Transmit				1
+
+#define UniDirec_2_Line			0
+#define BiDirec_1_Line			1
+
+#define Full_Duplex				0
+#define Output_Disable			1
+
+#define Slave_Mode				0
+#define Master_Mode				1
+
+#define Bit8					0	// DFF = 8-bits
+#define Bit16					1	// DFF = 16-bits
+
+#define Motorola_Mode			0
+#define TI_Mode					1
+
+#define MSB						0
+#define LSB						1
+
+#define Clock1					1
+#define Clock2					2
+#define Clock3					3
+#define Clock4					4
+
+#define CRCdisable				0
+#define CRCenable				1
+
+#define No_Phase				0
+#define Next_Transfer			1
+
+#define SSMdisable				0
+#define SSMenable				1
+
+#define SSOE_Disable			0
+#define SSOE_Enable				1
+
+#define rxDMA					0
+#define txDMA					1
+
+#define BR0          	 		0	// Fpclk/2
+#define BR1          			1	// Fpclk/4
+#define BR2         			2	// Fpclk/8
+#define BR3          			3	// Fpclk/16
+#define BR4         	  		4	// Fpclk/32
+#define BR5          			5	// Fpclk/64
+#define BR6           			6	// Fpclk/128
+#define BR7          		 	7	// Fpclk/256
+
+#define RXNEIE					1
+#define TXEIE					2
+#define TXRXIE					3
+
+#define DMA_RX					1
+#define DMA_TX					2
+#define DMA_TXRX				3
+
+#define FLAG_FRE				8
+#define FLAG_BSY				7
+#define FLAG_OVR				6
+#define FLAG_MODF				5
+#define FLAG_CRCERR				4
+#define FLAG_UDR				3
+#define FLAG_CHSIDE				2
+#define FLAG_TXE				1
+#define FLAG_RXNE				0
+
+#define readyTransmit    		getSPI4Status(FLAG_TXE)
+#define readyReceived    		getSPI4Status(FLAG_RXNE)
+#define isBusy					getSPI4Status(FLAG_BSY)
+
+#define SPI_BASE_ADDRESS  0x40013400
+#define SPI_reg					  ((SPI*)SPI_BASE_ADDRESS)
+
+int getSPI4Status(int posBit);
+void sendData(int Data);
+uint8_t receivedData(void);
+uint32_t readCRC(int path);
+void enableSPI(int SPE);
+void disableSPI(int SPE);
+void configureDirection(int direction);
+void configureOutput(int TX_RX);
+void configureMode(int mode);
+void configureDataFrame(int DFF);
+void configureFrameFormat(int FF);
+void configureLSBFIRST(int MSB_LSB);
+void configureClock(int clkSelect);
+void enableCRC(int en_CRC);
+void configureCRCNext(int phase);
+void enableSSM(int en_SSM);
+void configureBR(int baudRate);
+void configureSS(int SS);
+void CRCpolynomial(int polynomial);
+void DMAenable(int dma, int enable);
+void interruptSPI(int IE);
+void DMArequest(int DMA);
+
+#endif // __SPI_H__

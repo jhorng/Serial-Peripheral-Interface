@@ -1,9 +1,9 @@
-/**************************************************
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : DMA.c
  *
- **************************************************/
+*/
 
 #include "DMA.h"
 #include "RCC.h"

@@ -1,9 +1,9 @@
-/************************************************** 
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : GPIO.h
  *
- **************************************************/
+*/
 
 #ifndef __GPIO_H__
 #define __GPIO_H__

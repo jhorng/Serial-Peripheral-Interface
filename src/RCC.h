@@ -1,9 +1,9 @@
-/************************************************** 
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : RCC.h
  *
- **************************************************/
+*/
 
 #ifndef __RCC_H__
 #define __RCC_H__
@@ -49,11 +49,12 @@ struct Rcc_t{
 	volatile uint32_t RCC_PLLI2SCFGR;	// RCC PLLI2S configuration register
 };
 
+#include "Registers.h"
+
 #define dma1	0
 #define	dma2	1
 
-#define RCC_BASE_ADDRESS  0x40023800
-#define Rcc_reg	          ((Rcc*)RCC_BASE_ADDRESS)
+#define Rcc_reg	((Rcc*)RCC_BASE_ADDRESS)
 
 void gpioUnresetEnableClock(GPIO* port);
 void spi4UnresetEnableClock();

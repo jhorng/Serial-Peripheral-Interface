@@ -1,8 +1,8 @@
-/************************************************** 
+/* 
  *   Name : Chu Jaan Horng
  *   Title: Serial Interface Peripheral
  *   File : Main.c
- **************************************************/
+*/
 
 #include "stm32f4xx.h"
 #include "SPI.h"
